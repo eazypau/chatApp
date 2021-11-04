@@ -5,11 +5,18 @@
 .inputStyle {
   @apply block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white rounded-md border focus:border-blue-500 focus:outline-none focus:ring;
 }
-
 .authBtn {
   @apply px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded hover:bg-gray-600 focus:outline-none;
 }
-
 .authRouterLink {
   @apply mx-2 text-sm font-bold text-blue-500 hover:underline;
+}
+.dropDown {
+  @apply absolute right-0 z-20 w-32 mt-4 mr-1 bg-white rounded-md shadow-xl overflow-hidden;
+}
+.dropDownItem {
+  @apply block py-3 px-4 text-sm text-gray-600 capitalize transition-colors duration-200 transform hover:bg-gray-100;
+}
+.menuItemContainer {
+  @apply absolute right-0 w-40 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none;
 }
