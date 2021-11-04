@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
     <NavigationBar />
-    <router-view class="flex-1 flex items-center"></router-view>
+    <router-view></router-view>
   </div>
 </template>
 <script setup lang="ts">

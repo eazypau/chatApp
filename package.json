@@ -9,6 +9,7 @@
   "dependencies": {
     "@headlessui/vue": "^1.4.1",
     "bootstrap-icons": "^1.7.0",
+    "firebase": "^9.2.0",
     "pinia": "^2.0.1",
     "vue": "^3.2.16",
     "vue-router": "^4.0.12"
