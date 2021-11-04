@@ -7,6 +7,8 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.4.1",
+    "bootstrap-icons": "^1.7.0",
     "pinia": "^2.0.1",
     "vue": "^3.2.16",
     "vue-router": "^4.0.12"
@@ -15,7 +17,7 @@
     "@vitejs/plugin-vue": "^1.9.3",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.3.11",
-    "tailwindcss": "^2.2.19",
+    "tailwindcss": "3.0.0-alpha.1",
     "typescript": "^4.4.3",
     "vite": "^2.6.4",
     "vue-tsc": "^0.3.0"
