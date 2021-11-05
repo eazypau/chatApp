@@ -5,9 +5,9 @@
       src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
       alt=""
     />
-    <div class="text-xs pl-2">
-      <p class="mb-0.5">{{ item.name }}</p>
-      <p>{{ item.lastMessage }}</p>
+    <div class="pl-3">
+      <p class="text-sm">{{ item.name }}</p>
+      <p class="text-xs">{{ item.lastMessage }}</p>
     </div>
   </div>
 </template>

@@ -1,7 +1,15 @@
 <template>
   <div class="flex viewHeight">
-    <ContactList :contacts="contactList" @close-contact="showContact = false" v-if="showContact" />
-    <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
+    <transition name="addContact">
+      <ContactList
+        :contacts="contactList"
+        @close-contact="showContact = false"
+        v-if="showContact"
+      />
+    </transition>
+    <transition name="addContact">
+      <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
+    </transition>
     <div class="w-3/12 flex flex-col relative">
       <!-- left panel -->
       <Profile
@@ -56,7 +64,7 @@
             <!-- messages -->
             <ChatBallon v-for="item in listOfChatContent" :key="item.id" :messageList="item" />
           </div>
-          <div class="w-full flex items-center justify-between py-2 px-4 bg-gray-300">
+          <div class="w-full flex items-center justify-between py-3 px-5 bg-gray-300">
             <input
               type="text"
               name="newMsg"
@@ -66,7 +74,7 @@
               @keydown.enter="sendMessage"
             />
             <button type="button" @click="sendMessage">
-              <i class="bi bi-arrow-right-circle text-xl px-3"></i>
+              <i class="bi bi-arrow-right-circle text-xl pl-3"></i>
             </button>
           </div>
         </div>
@@ -80,22 +88,22 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useStore } from "../store/store";
-  import useDummy from "../composable/useDummy";
-  import { computed, ref } from "@vue/reactivity";
-  import ChatContact from "../components/organisms/ChatContact.vue";
-  import ChatBallon from "../components/molecules/ChatBallon.vue";
-  import DropDown from "../components/organisms/DropDown.vue";
-  import ChatDropDown from "../components/organisms/ChatDropDown.vue";
-  import Profile from "../components/organisms/Profile.vue";
-  import Profile1 from "../components/organisms/Profile.vue";
-  import ContactList from "../components/organisms/ContactList.vue";
-  import AddContact from "../components/molecules/AddContact.vue";
+  import { useStore } from '../store/store';
+  import useDummy from '../composable/useDummy';
+  import { computed, ref } from '@vue/reactivity';
+  import ChatContact from '../components/organisms/ChatContact.vue';
+  import ChatBallon from '../components/molecules/ChatBallon.vue';
+  import DropDown from '../components/organisms/DropDown.vue';
+  import ChatDropDown from '../components/organisms/ChatDropDown.vue';
+  import Profile from '../components/organisms/Profile.vue';
+  import Profile1 from '../components/organisms/Profile.vue';
+  import ContactList from '../components/organisms/ContactList.vue';
+  import AddContact from '../components/molecules/AddContact.vue';
 
   const { chatList, chatContent, contactList } = useDummy();
   const list = computed(() => chatList);
   const listOfChatContent = computed(() => {
-    if (currentChatId.value === "") {
+    if (currentChatId.value === '') {
       return [];
     }
     return chatContent.filter((item: any) => {
@@ -103,8 +111,8 @@
     });
   });
   const store = useStore();
-  let currentChatId = ref("");
-  let newMessage = ref("");
+  let currentChatId = ref('');
+  let newMessage = ref('');
   let showProfile = ref(false);
   let showOtherProfile = ref(false);
   let showContact = ref(false);
@@ -115,17 +123,17 @@
     currentChatId.value = chatId;
   };
   const openAddContact = () => {
-    console.log("open add contact...");
+    console.log('open add contact...');
   };
   const openContactList = () => {
-    console.log("open contact list...");
+    console.log('open contact list...');
   };
   const deleteChatHistory = () => {
-    console.log("delete chat history...");
+    console.log('delete chat history...');
   };
   const sendMessage = () => {
     const newMessageObj = {
-      name: "Mona",
+      name: 'Mona',
       message: newMessage.value,
       timeStamp: Date(),
     };
@@ -137,7 +145,7 @@
         break;
       }
     }
-    newMessage.value = "";
+    newMessage.value = '';
   };
 
   //! target to get everything done by 7th Nov
@@ -155,5 +163,13 @@
 <style>
   .viewHeight {
     height: 93vh;
+  }
+  .addContact-enter-active,
+  .addContact-leave-active {
+    transition: opacity 0.4s ease;
+  }
+  .addContact-enter-from,
+  .addContact-leave-to {
+    opacity: 0;
   }
 </style>

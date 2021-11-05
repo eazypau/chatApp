@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute z-10 inset-0 w-screen h-screen flex items-center justify-center">
+  <div class="absolute z-10 inset-0 w-screen h-screen flex items-center justify-center bg-slate-500 bg-opacity-40">
     <div class="bg-white border rounded-md overflow-hidden relative p-2">
       <button @click="$emit('closeContact')" class="absolute right-2 top-1 p-1">
         <i class="bi bi-x-lg"></i>

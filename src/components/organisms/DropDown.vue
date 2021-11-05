@@ -72,6 +72,7 @@
 </template>
 <script setup lang="ts">
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+  import { logOutUser } from '../../firebase/auth';
 
   const emit = defineEmits<{
     (e: "openAddContactWindow"): void;
@@ -80,5 +81,6 @@
   }>();
   const logOut = () => {
     console.log("log out...");
+    logOutUser()
   };
 </script>

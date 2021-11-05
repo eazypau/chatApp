@@ -1,8 +1,6 @@
 <template>
   <div class="pt-40">
-    <div
-      class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md"
-    >
+    <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
       <div class="px-6 py-4">
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
         <p class="mt-1 text-center text-gray-500">Register</p>
@@ -39,14 +37,16 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref } from "@vue/reactivity";
-  import TextInput from "../components/molecules/TextInput.vue";
-  import PwInput from "../components/molecules/PwInput.vue";
+  import { ref } from '@vue/reactivity';
+  import TextInput from '../components/molecules/TextInput.vue';
+  import PwInput from '../components/molecules/PwInput.vue';
+  import { createUserAcc } from '../firebase/auth';
 
-  let name = ref("");
-  let email = ref("");
-  let password = ref("");
+  let name = ref('');
+  let email = ref('');
+  let password = ref('');
   const createUser = () => {
-    console.log("create");
+    console.log('create');
+    createUserAcc(email.value, password.value);
   };
 </script>
