@@ -16,7 +16,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
-const storage = getStorage();
+const storage = getStorage(); 
 const auth = getAuth()
 
 export { db, storage, auth };
+
+//* access/create sub-collection, reference: https://firebase.google.com/docs/firestore/data-model
+//* maybe need to use arrayUnion, reference: https://firebase.google.com/docs/firestore/manage-data/add-data
