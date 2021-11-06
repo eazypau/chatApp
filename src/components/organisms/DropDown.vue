@@ -42,6 +42,18 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
+                @click="emit('openProfile')"
+                :class="[
+                  active ? 'bg-violet-500 text-white' : 'text-gray-900',
+                  'group flex rounded-md items-center w-full px-2 py-2 text-sm',
+                ]"
+              >
+                <i class="bi bi-eyeglasses pr-3"></i>
+                <p class="pb-1">Profile</p>
+              </button>
+            </MenuItem>
+            <MenuItem v-slot="{ active }">
+              <button
                 @click="logOut"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
@@ -60,12 +72,15 @@
 </template>
 <script setup lang="ts">
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+  import { logOutUser } from '../../firebase/auth';
 
   const emit = defineEmits<{
     (e: "openAddContactWindow"): void;
     (e: "openContactWindow"): void;
+    (e: "openProfile"): void;
   }>();
   const logOut = () => {
     console.log("log out...");
+    logOutUser()
   };
 </script>

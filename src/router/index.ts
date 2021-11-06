@@ -21,6 +21,11 @@ const routes = [
     name: "ForgotPassword",
     component: () => import("../views/ForgotPassword.vue"),
   },
+  {
+    path: "/test",
+    name: "Test",
+    component: () => import("../views/Test.vue"),
+  },
 ];
 
 const router = createRouter({

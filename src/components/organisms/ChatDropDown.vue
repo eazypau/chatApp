@@ -47,9 +47,9 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+  import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
   const emit = defineEmits<{
-    (e: "viewContactDetails"): void;
-    (e: "deleteChat"): void;
+    (e: 'viewContactDetails'): void;
+    (e: 'deleteChat'): void;
   }>();
 </script>

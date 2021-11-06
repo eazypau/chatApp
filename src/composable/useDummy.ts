@@ -1,5 +1,24 @@
 import { reactive } from "@vue/reactivity";
 
+let contactList = [
+  {
+    name: "Samuel",
+    profilePhoto: "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg",
+  },
+  {
+    name: "Samuel",
+    profilePhoto: "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg",
+  },
+  {
+    name: "Samuel",
+    profilePhoto: "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg",
+  },
+  {
+    name: "Samuel",
+    profilePhoto: "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg",
+  },
+];
+
 let chatList = reactive([
   {
     name: "Lisa",
@@ -77,6 +96,6 @@ let chatContent = reactive([
 ]);
 
 export default () => {
-  const currentUserName = "Mona"
-  return { chatList, chatContent, currentUserName };
+  const currentUserName = "Mona";
+  return { chatList, chatContent, currentUserName, contactList };
 };
