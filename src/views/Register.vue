@@ -47,6 +47,6 @@
   let password = ref('');
   const createUser = () => {
     console.log('create');
-    createUserAcc(email.value, password.value);
+    createUserAcc(email.value, password.value, name.value);
   };
 </script>
