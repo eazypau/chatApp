@@ -3,16 +3,20 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
-} from "@firebase/auth";
-import router from "../router";
-import { auth } from "./firebase";
-import { createUserProfile } from "./profile";
+} from '@firebase/auth';
+import router from '../router';
+import { useStore } from '../store/store';
+import { auth } from './firebase';
+import { createUserProfile } from './profile';
+
+const store = useStore();
 
 const signInExistingUser = (email: string, password: string) => {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCred) => {
-      const user = userCred;
-      router.push({ name: "Home" });
+      const user = userCred.user;
+      store.user = user.uid;
+      return router.push({ name: 'Home' });
     })
     .catch((err) => {
       console.log(err.message);
@@ -22,24 +26,27 @@ const signInExistingUser = (email: string, password: string) => {
 const logOutUser = () => {
   signOut(auth)
     .then(() => {
-      router.push({ name: "Login" });
+      return router.push({ name: 'Login' });
     })
     .catch((err) => {
       console.log(err.message);
     });
 };
 
-const createUserAcc = (email: string, password: string, name: string) => {
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCred) => {
-      const userId = userCred.uid;
+const createUserAcc = (userDetails: { email: string; password: string; name: string }) => {
+  createUserWithEmailAndPassword(auth, userDetails.email, userDetails.password)
+    .then(async (userCred) => {
+      const user = userCred.user;
+      console.log(user.uid);
       const userProfile = {
-        id: userId,
-        name: name,
-        email: email,
-        photo: "",
+        id: user.uid,
+        name: userDetails.name,
+        email: userDetails.email,
+        photo: '',
       };
-      createUserProfile(userProfile);
+      store.user = user.uid;
+      await createUserProfile(userProfile);
+      router.push({ name: 'Home' });
     })
     .catch((err) => {
       console.log(err.message);
@@ -49,7 +56,7 @@ const createUserAcc = (email: string, password: string, name: string) => {
 const sendNewPassWord = (email: string) => {
   sendPasswordResetEmail(auth, email)
     .then(() => {
-      console.log("Successfully send password");
+      console.log('Successfully send password');
     })
     .catch((err) => {
       console.log(err.message);

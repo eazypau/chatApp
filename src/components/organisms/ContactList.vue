@@ -11,7 +11,7 @@
         v-for="friend in contacts"
         :key="friend"
         @click="$emit('createChat')"
-        class="flex items-center py-2 px-4 border-b border-gray-300"
+        class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
       >
         <img class="h-8 rounded-full" :src="friend.profilePhoto" />
         <p class="pl-2 text-sm">{{ friend.name }}</p>

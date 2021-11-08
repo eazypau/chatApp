@@ -16,6 +16,9 @@
         v-if="showProfile"
         @closeProfile="showProfile = false"
         class="absolute inset-0 w-full"
+        :profileImg="profileDoc.photo"
+        :userEmail="profileDoc.email"
+        :userName="profileDoc.name"
       />
       <div class="flex items-center justify-between py-2 px-4 bg-gray-300">
         <!-- left header -->
@@ -96,7 +99,6 @@
   import DropDown from '../components/organisms/DropDown.vue';
   import ChatDropDown from '../components/organisms/ChatDropDown.vue';
   import Profile from '../components/organisms/Profile.vue';
-  import Profile1 from '../components/organisms/Profile.vue';
   import ContactList from '../components/organisms/ContactList.vue';
   import AddContact from '../components/molecules/AddContact.vue';
 
@@ -111,6 +113,10 @@
     });
   });
   const store = useStore();
+  // await store.fetchUserProfile();
+  const profileDoc = computed(() => {
+    return store.getProfile;
+  });
   let currentChatId = ref('');
   let newMessage = ref('');
   let showProfile = ref(false);

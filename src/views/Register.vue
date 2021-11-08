@@ -1,5 +1,9 @@
 <template>
-  <div class="pt-40">
+  <div class="w-screen h-screen flex items-center justify-center bg-gray-300 bg-opacity-75">
+    <transition name="modal">
+      <Notification v-if="showMsg" :errorMsg="popUpMsg" />
+    </transition>
+
     <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
       <div class="px-6 py-4">
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
@@ -22,6 +26,12 @@
             inputName="pasword"
             :value="password"
             @update:model-value="password = $event"
+          />
+          <PwInput
+            name="ConfirmPassword"
+            inputName="confirmPassword"
+            :value="confirmPassword"
+            @update:model-value="confirmPassword = $event"
             @keydown.enter="createUser"
           />
           <div class="flex items-center justify-center mt-4">
@@ -41,12 +51,50 @@
   import TextInput from '../components/molecules/TextInput.vue';
   import PwInput from '../components/molecules/PwInput.vue';
   import { createUserAcc } from '../firebase/auth';
+  import Notification from '../components/molecules/Notification.vue';
 
   let name = ref('');
   let email = ref('');
   let password = ref('');
-  const createUser = () => {
-    console.log('create');
-    createUserAcc(email.value, password.value, name.value);
+  let confirmPassword = ref('');
+  let popUpMsg = ref('');
+  let showMsg = ref(false);
+  const createUser = async () => {
+    // console.log('create');
+    if (
+      name.value === '' ||
+      email.value === '' ||
+      password.value === '' ||
+      confirmPassword.value === ''
+    ) {
+      popUpMsg.value = 'Please provide the information required.';
+      showMsg.value = true;
+      setTimeout(() => (showMsg.value = false), 2000);
+      return;
+    }
+    if (password.value !== confirmPassword.value) {
+      popUpMsg.value = 'Password and confirm password must be same';
+      showMsg.value = true;
+      setTimeout(() => (showMsg.value = false), 2000);
+      password.value = '';
+      confirmPassword.value = '';
+      return;
+    }
+    const userDetails = {
+      email: email.value,
+      name: name.value,
+      password: password.value,
+    };
+    createUserAcc(userDetails);
   };
 </script>
+<style>
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.5s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  transform: translateY(-100px);
+}
+</style>

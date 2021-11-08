@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-40">
+  <div class="w-screen h-screen flex items-center justify-center bg-gray-300 bg-opacity-75">
     <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
       <div class="px-6 py-4">
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>

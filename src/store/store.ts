@@ -1,5 +1,6 @@
-import { defineStore } from "pinia";
-import { user } from "../classes/type";
+import { defineStore } from 'pinia';
+import { user } from '../classes/type';
+import { readUserProfile } from '../firebase/profile';
 
 interface ChatState {
   count: number;
@@ -7,15 +8,15 @@ interface ChatState {
   profile: user;
 }
 
-export const useStore = defineStore("store", {
+export const useStore = defineStore('store', {
   state: (): ChatState => ({
     count: 0,
-    user: {},
+    user: '',
     profile: {
-      id: "",
-      name: "",
-      email: "",
-      photo: "",
+      id: '',
+      name: '',
+      email: '',
+      photo: '',
     },
   }),
   getters: {
@@ -26,5 +27,15 @@ export const useStore = defineStore("store", {
       return state.profile;
     },
   },
-  actions: {},
+  actions: {
+    async fetchUserProfile() {
+      try {
+        const res: any = await readUserProfile(this.user);
+        this.profile = res;
+        // console.log(this.profile);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 });
