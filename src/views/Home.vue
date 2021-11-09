@@ -10,17 +10,17 @@
     <transition name="addContact">
       <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
     </transition>
-    <div class="w-3/12 flex flex-col relative">
+    <div class="w-3/12 flex flex-col">
       <!-- left panel -->
       <Profile
         v-if="showProfile"
         @closeProfile="showProfile = false"
-        class="absolute inset-0 w-full"
-        :profileImg="profileDoc.photo"
+        class="w-full"
+        :profileImg="profilePic"
         :userEmail="profileDoc.email"
         :userName="profileDoc.name"
       />
-      <div class="flex items-center justify-between py-2 px-4 bg-gray-300">
+      <div v-if="!showProfile" class="flex items-center justify-between py-2 px-4 bg-gray-300">
         <!-- left header -->
         <img
           class="h-10 rounded-full"
@@ -33,7 +33,7 @@
           @open-profile="showProfile = true"
         />
       </div>
-      <div class="bg-gray-100 flex-1">
+      <div v-if="!showProfile" class="bg-gray-100 flex-1">
         <!-- body -->
         <ChatContact
           v-for="chatName in list"
@@ -101,6 +101,8 @@
   import Profile from '../components/organisms/Profile.vue';
   import ContactList from '../components/organisms/ContactList.vue';
   import AddContact from '../components/molecules/AddContact.vue';
+  import { onAuthStateChanged } from '@firebase/auth';
+  import { auth } from '../firebase/firebase';
 
   const { chatList, chatContent, contactList } = useDummy();
   const list = computed(() => chatList);
@@ -113,9 +115,18 @@
     });
   });
   const store = useStore();
-  // await store.fetchUserProfile();
+  onAuthStateChanged(auth, async (user: any) => {
+    store.user = user.uid;
+    await store.fetchUserProfile();
+  });
   const profileDoc = computed(() => {
     return store.getProfile;
+  });
+  const profilePic = computed(() => {
+    if (store.getProfile.photo === '') {
+      return 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg';
+    }
+    return store.getProfile.photo;
   });
   let currentChatId = ref('');
   let newMessage = ref('');

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mt-4">
+  <div class="w-full">
     <input
       class="inputStyle"
       type="text"

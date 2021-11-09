@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .inputStyle {
-  @apply block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white rounded-md border focus:border-blue-500 focus:outline-none focus:ring;
+  @apply block w-full px-2 py-1 text-gray-700 placeholder-gray-500 bg-white rounded border focus:border-blue-500 focus:outline-none focus:ring;
 }
 .authBtn {
   @apply px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded hover:bg-gray-600 focus:outline-none;

@@ -5,7 +5,7 @@
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
         <h3 class="mt-1 text-xl font-medium text-center text-gray-600">Welcome Back</h3>
         <p class="mt-1 text-center text-gray-500">Login</p>
-        <form>
+        <form class="mt-3">
           <TextInput
             name="Email"
             inputName="email"

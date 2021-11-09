@@ -8,7 +8,7 @@
       <div class="px-6 py-4">
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
         <p class="mt-1 text-center text-gray-500">Register</p>
-        <form>
+        <form class="mt-3">
           <TextInput
             name="Name"
             inputName="name"
@@ -16,6 +16,7 @@
             @update:model-value="name = $event"
           />
           <TextInput
+          class="mt-2"
             name="Email"
             inputName="email"
             :value="email"

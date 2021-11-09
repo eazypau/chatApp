@@ -3,19 +3,20 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
+  updateEmail,
 } from '@firebase/auth';
 import router from '../router';
 import { useStore } from '../store/store';
 import { auth } from './firebase';
 import { createUserProfile } from './profile';
 
-const store = useStore();
+// const store = useStore();
 
 const signInExistingUser = (email: string, password: string) => {
   signInWithEmailAndPassword(auth, email, password)
     .then((userCred) => {
       const user = userCred.user;
-      store.user = user.uid;
+      // store.user = user.uid;
       return router.push({ name: 'Home' });
     })
     .catch((err) => {
@@ -44,7 +45,7 @@ const createUserAcc = (userDetails: { email: string; password: string; name: str
         email: userDetails.email,
         photo: '',
       };
-      store.user = user.uid;
+      // store.user = user.uid;
       await createUserProfile(userProfile);
       router.push({ name: 'Home' });
     })
@@ -63,4 +64,14 @@ const sendNewPassWord = (email: string) => {
     });
 };
 
-export { signInExistingUser, logOutUser, createUserAcc, sendNewPassWord };
+const updateUserAccEmail = (email: string) => {
+  updateEmail(auth.currentUser, email)
+    .then(() => {
+      alert('Successfully update email address');
+    })
+    .catch((err) => {
+      alert(`${err.message}`);
+    });
+};
+
+export { signInExistingUser, logOutUser, createUserAcc, sendNewPassWord, updateUserAccEmail };
