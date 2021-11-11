@@ -14,7 +14,7 @@
 </template>
 <script setup lang="ts">
   import { arrayUnion, doc, setDoc, updateDoc } from '@firebase/firestore';
-  import { db } from '../firebase/firebase';
+  import { db, getCurrentUser } from '../firebase/firebase';
   import Notification from '../components/molecules/Notification.vue';
   import { ref } from '@vue/reactivity';
 

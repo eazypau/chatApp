@@ -13,17 +13,6 @@ const createUserProfile = async (userDetails: user) => {
   }
 };
 
-const readUserProfile = async (userId: string) => {
-  const docRef = doc(db, 'userCollection', userId);
-  const docSnap = await getDoc(docRef);
-  if (docSnap.exists()) {
-    console.log(docSnap.data());
-    return docSnap.data();
-  } else {
-    return console.log('User profile does not exist');
-  }
-};
-
 const updateUserName = async (userId: string, newName: string) => {
   const docRef = doc(db, 'userCollection', userId);
   await updateDoc(docRef, {
@@ -43,4 +32,4 @@ const updateUserPhoto = async (userId: string, newPhotoURL: string) => {
   });
 };
 
-export { createUserProfile, readUserProfile, updateUserName, updateUserEmail, updateUserPhoto };
+export { createUserProfile, updateUserName, updateUserEmail, updateUserPhoto };

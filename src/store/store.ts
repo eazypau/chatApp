@@ -1,41 +1,49 @@
 import { getDownloadURL, ref, uploadBytesResumable } from '@firebase/storage';
 import { defineStore } from 'pinia';
-import { user } from '../classes/type';
+import { contactsObj, userObj } from '../classes/type';
 import { updateUserAccEmail } from '../firebase/auth';
-import { storage } from '../firebase/firebase';
-import { readUserProfile, updateUserEmail, updateUserName, updateUserPhoto } from '../firebase/profile';
+import {
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+  where,
+  query,
+  addDoc,
+  getDocs,
+} from '@firebase/firestore';
+import { db, storage } from '../firebase/firebase';
+import { updateUserEmail, updateUserName, updateUserPhoto } from '../firebase/profile';
 
 interface ChatState {
-  count: number;
   user: string;
-  profile: user;
+  profile: any;
+  contactList: contactsObj[];
 }
 
 export const useStore = defineStore('store', {
   state: (): ChatState => ({
-    count: 0,
     user: '',
-    profile: {
-      id: '',
-      name: '',
-      email: '',
-      photo: '',
-    },
+    profile: {} as userObj,
+    contactList: [],
   }),
   getters: {
-    getCount(state) {
-      return state.count;
-    },
     getProfile(state) {
       return state.profile;
+    },
+    getContactList(state) {
+      return state.contactList;
     },
   },
   actions: {
     async fetchUserProfile() {
       try {
-        const res: any = await readUserProfile(this.user);
-        this.profile = res;
-        // console.log(this.profile);
+        const docRef = doc(db, 'userCollection', this.user);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          console.log(docSnap.data());
+          this.profile = docSnap.data();
+        }
       } catch (error) {
         console.log(error);
       }
@@ -76,11 +84,46 @@ export const useStore = defineStore('store', {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
               console.log('File available at', downloadURL);
               this.profile.photo = downloadURL;
-              updateUserPhoto(this.user, downloadURL)
+              updateUserPhoto(this.user, downloadURL);
             });
           }
         );
       } catch (error) {}
+    },
+    async addUserContact(email: string) {
+      // search profile by email
+      let contacts = [];
+      const userCollectionRef = collection(db, 'userCollection');
+      const userContactCollectionRef = collection(db, 'userCollection', this.user, 'contacts');
+      const q: any = query(userCollectionRef, where('email', '==', email));
+      // if exist add
+      const findDoc: any = await getDocs(q);
+      if (findDoc.length > 0) {
+        try {
+          findDoc.forEach((doc: any) => {
+            contacts.push(doc.data());
+          });
+          const addContactDoc = await addDoc(userContactCollectionRef, contacts[0]);
+          console.log(addContactDoc.id);
+          const updateDocWithId = await updateDoc(
+            doc(db, 'userCollection', this.user, 'contacts', addContactDoc.id),
+            {
+              docId: addContactDoc.id,
+            }
+          );
+          // trigger fetch contacts
+          await this.fetchContactList();
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    async fetchContactList() {
+      const userContactCollectionRef = collection(db, 'userCollection', this.user, 'contacts');
+      const querySnapshot = await getDocs(userContactCollectionRef);
+      querySnapshot.forEach((doc: any) => {
+        this.contactList.push(doc.data());
+      });
     },
   },
 });

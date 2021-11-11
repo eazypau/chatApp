@@ -1,92 +1,95 @@
 <template>
-  <div class="flex viewHeight">
-    <transition name="addContact">
-      <ContactList
-        :contacts="contactList"
-        @close-contact="showContact = false"
-        v-if="showContact"
-      />
-    </transition>
-    <transition name="addContact">
-      <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
-    </transition>
-    <div class="w-3/12 flex flex-col">
-      <!-- left panel -->
-      <Profile
-        v-if="showProfile"
-        @closeProfile="showProfile = false"
-        class="w-full"
-        :profileImg="profilePic"
-        :userEmail="profileDoc.email"
-        :userName="profileDoc.name"
-      />
-      <div v-if="!showProfile" class="flex items-center justify-between py-2 px-4 bg-gray-300">
-        <!-- left header -->
-        <img
-          class="h-10 rounded-full"
-          src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
-          alt=""
+  <div>
+    <NavigationBar />
+    <div class="flex viewHeight">
+      <transition name="addContact">
+        <ContactList
+          :contacts="contactList"
+          @close-contact="showContact = false"
+          v-if="showContact"
         />
-        <DropDown
-          @open-add-contact-window="showAddContact = true"
-          @open-contact-window="showContact = true"
-          @open-profile="showProfile = true"
+      </transition>
+      <transition name="addContact">
+        <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
+      </transition>
+      <div class="w-3/12 flex flex-col">
+        <!-- left panel -->
+        <Profile
+          v-if="showProfile"
+          @closeProfile="showProfile = false"
+          class="w-full"
+          :profileImg="profilePic"
+          :userEmail="profileDoc.email"
+          :userName="profileDoc.name"
         />
-      </div>
-      <div v-if="!showProfile" class="bg-gray-100 flex-1">
-        <!-- body -->
-        <ChatContact
-          v-for="chatName in list"
-          :key="chatName.chatId"
-          :item="chatName"
-          @passId="storeChatId"
-        />
-      </div>
-    </div>
-    <div class="w-px bg-black"></div>
-    <div class="w-9/12 flex">
-      <!-- right panel -->
-      <div class="flex flex-col h-full flex-1">
-        <div class="flex items-center justify-between py-2 px-4 bg-gray-300">
-          <!-- right header -->
-          <div class="flex items-center">
-            <img
-              class="h-10 rounded-full"
-              src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
-            />
-            <p class="px-3">name</p>
-          </div>
-          <ChatDropDown
-            @view-contact-details="showOtherProfile = true"
-            @delete-chat="deleteChatHistory"
+        <div v-if="!showProfile" class="flex items-center justify-between py-2 px-4 bg-gray-300">
+          <!-- left header -->
+          <img
+            class="h-10 rounded-full"
+            src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
+            alt=""
+          />
+          <DropDown
+            @open-add-contact-window="showAddContact = true"
+            @open-contact-window="showContact = true"
+            @open-profile="showProfile = true"
           />
         </div>
-        <div class="bg-gray-100 flex-1 flex flex-col justify-between">
+        <div v-if="!showProfile" class="bg-gray-100 flex-1">
           <!-- body -->
-          <div class="px-4 pt-2">
-            <!-- messages -->
-            <ChatBallon v-for="item in listOfChatContent" :key="item.id" :messageList="item" />
-          </div>
-          <div class="w-full flex items-center justify-between py-3 px-5 bg-gray-300">
-            <input
-              type="text"
-              name="newMsg"
-              id="newMsg"
-              v-model="newMessage"
-              class="rounded-full flex-1 h-8 px-4"
-              @keydown.enter="sendMessage"
-            />
-            <button type="button" @click="sendMessage">
-              <i class="bi bi-arrow-right-circle text-xl pl-3"></i>
-            </button>
-          </div>
+          <ChatContact
+            v-for="chatName in list"
+            :key="chatName.chatId"
+            :item="chatName"
+            @passId="storeChatId"
+          />
         </div>
       </div>
-      <Profile
-        v-if="showOtherProfile"
-        @closeProfile="showOtherProfile = false"
-        class="absolute inset-0 w-4/12"
-      />
+      <div class="w-px bg-black"></div>
+      <div class="w-9/12 flex">
+        <!-- right panel -->
+        <div class="flex flex-col h-full flex-1">
+          <div class="flex items-center justify-between py-2 px-4 bg-gray-300">
+            <!-- right header -->
+            <div class="flex items-center">
+              <img
+                class="h-10 rounded-full"
+                src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
+              />
+              <p class="px-3">name</p>
+            </div>
+            <ChatDropDown
+              @view-contact-details="showOtherProfile = true"
+              @delete-chat="deleteChatHistory"
+            />
+          </div>
+          <div class="bg-gray-100 flex-1 flex flex-col justify-between">
+            <!-- body -->
+            <div class="px-4 pt-2">
+              <!-- messages -->
+              <ChatBallon v-for="item in listOfChatContent" :key="item.id" :messageList="item" />
+            </div>
+            <div class="w-full flex items-center justify-between py-3 px-5 bg-gray-300">
+              <input
+                type="text"
+                name="newMsg"
+                id="newMsg"
+                v-model="newMessage"
+                class="rounded-full flex-1 h-8 px-4"
+                @keydown.enter="sendMessage"
+              />
+              <button type="button" @click="sendMessage">
+                <i class="bi bi-arrow-right-circle text-xl pl-3"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <Profile
+          v-if="showOtherProfile"
+          @closeProfile="showOtherProfile = false"
+          class="absolute inset-0 w-4/12"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -103,8 +106,9 @@
   import AddContact from '../components/molecules/AddContact.vue';
   import { onAuthStateChanged } from '@firebase/auth';
   import { auth } from '../firebase/firebase';
+  import NavigationBar from '../components/organisms/NavigationBar.vue';
 
-  const { chatList, chatContent, contactList } = useDummy();
+  const { chatList, chatContent } = useDummy();
   const list = computed(() => chatList);
   const listOfChatContent = computed(() => {
     if (currentChatId.value === '') {
@@ -118,6 +122,7 @@
   onAuthStateChanged(auth, async (user: any) => {
     store.user = user.uid;
     await store.fetchUserProfile();
+    await store.fetchContactList();
   });
   const profileDoc = computed(() => {
     return store.getProfile;
@@ -127,6 +132,12 @@
       return 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg';
     }
     return store.getProfile.photo;
+  });
+  const contactList = computed(() => {
+    if (store.getContactList.length === 0) {
+      return [];
+    }
+    return store.getContactList;
   });
   let currentChatId = ref('');
   let newMessage = ref('');
@@ -179,7 +190,7 @@
 </script>
 <style>
   .viewHeight {
-    height: 93vh;
+    height: 97vh;
   }
   .addContact-enter-active,
   .addContact-leave-active {

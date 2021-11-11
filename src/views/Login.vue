@@ -46,7 +46,7 @@
   const login = () => {
     console.log('login');
     signInExistingUser(email.value, password.value);
-    email.value = '';
-    password.value = '';
+    // email.value = '';
+    // password.value = '';
   };
 </script>

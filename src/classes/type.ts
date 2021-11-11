@@ -1,13 +1,20 @@
-type user = {
+type userObj = {
   id: string;
   name: string;
   email: string;
   photo: string;
 };
-type message = {
+type messageObj = {
   name: string;
   text: string;
   timeStamp: string;
 };
+type contactsObj = {
+  name: string;
+  email: string;
+  id: string;
+  photo: string;
+  docId: string;
+};
 
-export { user, message };
+export { userObj, messageObj, contactsObj };
