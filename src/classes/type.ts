@@ -3,6 +3,7 @@ type userObj = {
   name: string;
   email: string;
   photo: string;
+  chatGroupIds: [];
 };
 type messageObj = {
   name: string;

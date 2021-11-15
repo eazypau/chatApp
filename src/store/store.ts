@@ -11,6 +11,8 @@ import {
   query,
   addDoc,
   getDocs,
+  arrayUnion,
+  serverTimestamp,
 } from "@firebase/firestore";
 import { db, storage } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
@@ -134,15 +136,29 @@ export const useStore = defineStore("store", {
     //* for creating/saving chat
     //* maybe save the id as an array in participants (2 elements in an array)
     //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
+    //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async createChat(chatDoc: any) {
-      const chatCollection = collection(db, "chats");
-      const creatChatDoc: any = addDoc(chatCollection, chatDoc);
-      const updateDocWithId = await updateDoc(doc(db, "chats", creatChatDoc.id), {
-        id: creatChatDoc.id,
+      const chatCollection = collection(db, "chats", chatDoc.id);
+      const createChatDoc: any = addDoc(chatCollection, chatDoc);
+      const docRef = doc(db, "userCollection", this.user);
+      await updateDoc(doc(db, "chats", createChatDoc.id), {
+        id: createChatDoc.id,
+      });
+      await updateDoc(docRef, {
+        chatGroupIds: arrayUnion(createChatDoc.id),
       });
     },
     async sendMessage(message: any) {
       console.log("send message");
+      const messageSubCollection = collection(db, "chats", message.chatId, "messages");
+      const createMsgDoc = addDoc(messageSubCollection, {
+        text: message.text,
+        sentAt: serverTimestamp(),
+        sendBy: message.senderId,
+      });
     },
+    //TODO: need to use onSnapShot to listen to changes in firestore collection
+    //* ref: https://firebase.google.com/docs/firestore/query-data/listen#listen_to_multiple_documents_in_a_collection
+    //* ref: https://stackoverflow.com/questions/48606611/firestore-listen-to-update-on-the-entire-collection/48608816
   },
 });

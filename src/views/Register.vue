@@ -85,6 +85,7 @@
       email: email.value,
       name: name.value,
       password: password.value,
+      chatGroupIds: []
     };
     createUserAcc(userDetails);
   };

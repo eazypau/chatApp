@@ -41,6 +41,7 @@ const createUserAcc = (userDetails: { email: string; password: string; name: str
         name: userDetails.name,
         email: userDetails.email,
         photo: '',
+        chatGroupIds: []
       };
       // store.user = user.uid;
       await createUserProfile(userProfile);

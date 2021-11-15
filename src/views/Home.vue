@@ -157,8 +157,13 @@
 
   const createChatWindow = (contactDoc: contactsObj) => {
     const chatDocInfo = {
-      contact1_id: profileDoc.value.id,
-      contact2_id: contactDoc.id,
+      members: [profileDoc.value.id, contactDoc.id],
+      recentMessage: {
+        messageText: "",
+        sendBy: "",
+        sentAt: "",
+      },
+      createdAt: "",
     };
     // console.log(chatDocInfo);
     // store.createChat(chatDocInfo);
