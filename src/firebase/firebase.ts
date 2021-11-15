@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, Unsubscribe } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,7 +16,22 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
-const storage = getStorage();
+const storage = getStorage(); 
 const auth = getAuth()
+const getCurrentUser = () => {
+  return new Promise<boolean>((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user:any) => {
+      unsubscribe()
+      if (user) {
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
+  })
+}
 
-export { db, storage, auth };
+export { db, storage, auth, getCurrentUser };
+
+//* access/create sub-collection, reference: https://firebase.google.com/docs/firestore/data-model
+//* maybe need to use arrayUnion, reference: https://firebase.google.com/docs/firestore/manage-data/add-data
