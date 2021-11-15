@@ -6,6 +6,7 @@
         <ContactList
           :contacts="contactList"
           @close-contact="showContact = false"
+          @createChat="createChatWindow"
           v-if="showContact"
         />
       </transition>
@@ -54,9 +55,13 @@
             <div class="flex items-center">
               <img
                 class="h-10 rounded-full"
-                src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
+                :src="
+                  currentPhoto === ''
+                    ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
+                    : currentPhoto
+                "
               />
-              <p class="px-3">name</p>
+              <p class="px-3">{{ currentChatName }}</p>
             </div>
             <ChatDropDown
               @view-contact-details="showOtherProfile = true"
@@ -94,24 +99,25 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { useStore } from '../store/store';
-  import useDummy from '../composable/useDummy';
-  import { computed, ref } from '@vue/reactivity';
-  import ChatContact from '../components/organisms/ChatContact.vue';
-  import ChatBallon from '../components/molecules/ChatBallon.vue';
-  import DropDown from '../components/organisms/DropDown.vue';
-  import ChatDropDown from '../components/organisms/ChatDropDown.vue';
-  import Profile from '../components/organisms/Profile.vue';
-  import ContactList from '../components/organisms/ContactList.vue';
-  import AddContact from '../components/molecules/AddContact.vue';
-  import { onAuthStateChanged } from '@firebase/auth';
-  import { auth } from '../firebase/firebase';
-  import NavigationBar from '../components/organisms/NavigationBar.vue';
+  import { useStore } from "../store/store";
+  import useDummy from "../composable/useDummy";
+  import { computed, ref } from "@vue/reactivity";
+  import ChatContact from "../components/organisms/ChatContact.vue";
+  import ChatBallon from "../components/molecules/ChatBallon.vue";
+  import DropDown from "../components/organisms/DropDown.vue";
+  import ChatDropDown from "../components/organisms/ChatDropDown.vue";
+  import Profile from "../components/organisms/Profile.vue";
+  import ContactList from "../components/organisms/ContactList.vue";
+  import AddContact from "../components/molecules/AddContact.vue";
+  import { onAuthStateChanged } from "@firebase/auth";
+  import { auth } from "../firebase/firebase";
+  import NavigationBar from "../components/organisms/NavigationBar.vue";
+  import { contactsObj } from "../classes/type";
 
   const { chatList, chatContent } = useDummy();
   const list = computed(() => chatList);
   const listOfChatContent = computed(() => {
-    if (currentChatId.value === '') {
+    if (currentChatId.value === "") {
       return [];
     }
     return chatContent.filter((item: any) => {
@@ -128,8 +134,8 @@
     return store.getProfile;
   });
   const profilePic = computed(() => {
-    if (store.getProfile.photo === '') {
-      return 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg';
+    if (store.getProfile.photo === "") {
+      return "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg";
     }
     return store.getProfile.photo;
   });
@@ -139,29 +145,43 @@
     }
     return store.getContactList;
   });
-  let currentChatId = ref('');
-  let newMessage = ref('');
+  let currentChatName = ref("");
+  let currentChatId = ref("");
+  let currentPhoto = ref("");
+  let newMessage = ref("");
   let showProfile = ref(false);
   let showOtherProfile = ref(false);
   let showContact = ref(false);
   let showAddContact = ref(false);
   // let currentUserName = ref("");
 
-  const storeChatId = (chatId: string) => {
+  const createChatWindow = (contactDoc: contactsObj) => {
+    const chatDocInfo = {
+      contact1_id: profileDoc.value.id,
+      contact2_id: contactDoc.id,
+    };
+    // console.log(chatDocInfo);
+    // store.createChat(chatDocInfo);
+    currentPhoto.value = contactDoc.photo;
+    currentChatName.value = contactDoc.name;
+    showContact.value = false;
+  };
+  const storeChatId = (chatId: string, chatName: string) => {
     currentChatId.value = chatId;
+    currentChatName.value = chatName;
   };
   const openAddContact = () => {
-    console.log('open add contact...');
+    console.log("open add contact...");
   };
   const openContactList = () => {
-    console.log('open contact list...');
+    console.log("open contact list...");
   };
   const deleteChatHistory = () => {
-    console.log('delete chat history...');
+    console.log("delete chat history...");
   };
   const sendMessage = () => {
     const newMessageObj = {
-      name: 'Mona',
+      name: "Mona",
       message: newMessage.value,
       timeStamp: Date(),
     };
@@ -173,7 +193,7 @@
         break;
       }
     }
-    newMessage.value = '';
+    newMessage.value = "";
   };
 
   //! target to get everything done by 7th Nov

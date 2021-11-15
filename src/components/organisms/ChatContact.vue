@@ -1,9 +1,8 @@
 <template>
-  <div @click="viewChat" class="flex items-center py-2 px-4 border-b border-gray-300">
+  <div @click="viewChat" class="flex items-center py-2 px-4 border-b border-gray-300 hover:cursor-pointer">
     <img
       class="h-10 rounded-full"
       src="https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg"
-      alt=""
     />
     <div class="pl-3">
       <p class="text-sm">{{ item.name }}</p>
@@ -19,7 +18,7 @@
     setup(props, { emit }) {
       const viewChat = () => {
         console.log("view chat");
-        emit("passId", props.item.chatId);
+        emit("passId", props.item.chatId, props.item.name);
       };
       return { viewChat };
     },

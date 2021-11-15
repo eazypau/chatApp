@@ -6,11 +6,8 @@ import {
   updateEmail,
 } from '@firebase/auth';
 import router from '../router';
-import { useStore } from '../store/store';
 import { auth } from './firebase';
 import { createUserProfile } from './profile';
-
-// const store = useStore();
 
 const signInExistingUser = (email: string, password: string) => {
   signInWithEmailAndPassword(auth, email, password)

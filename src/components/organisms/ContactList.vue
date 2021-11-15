@@ -1,5 +1,17 @@
 <template>
-  <div class="absolute z-10 inset-0 w-screen h-screen flex items-center justify-center bg-slate-500 bg-opacity-40">
+  <div
+    class="
+      absolute
+      z-10
+      inset-0
+      w-screen
+      h-screen
+      flex
+      items-center
+      justify-center
+      bg-slate-500 bg-opacity-40
+    "
+  >
     <div class="w-96 h-72 bg-white border rounded-md overflow-hidden relative">
       <button @click="$emit('closeContact')" class="absolute right-2 top-2 p-1">
         <i class="bi bi-x-lg"></i>
@@ -10,10 +22,17 @@
       <div
         v-for="friend in contacts"
         :key="friend"
-        @click="$emit('createChat')"
+        @click="$emit('createChat', friend)"
         class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
       >
-        <img class="h-8 rounded-full" :src="friend.profilePhoto" />
+        <img
+          class="h-8 rounded-full"
+          :src="
+            friend.photo === ''
+              ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
+              : friend.photo
+          "
+        />
         <p class="pl-2 text-sm">{{ friend.name }}</p>
       </div>
     </div>

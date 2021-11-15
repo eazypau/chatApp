@@ -35,16 +35,17 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref } from '@vue/reactivity';
-  import { useStore } from '../../store/store';
+  import { ref } from "@vue/reactivity";
+  import { useStore } from "../../store/store";
 
-  let userEmail = ref('');
+  let userEmail = ref("");
   const store = useStore();
 
-  const addContacts = () => {
-    if (userEmail.value === '') {
-      return
+  const addContacts = async () => {
+    if (userEmail.value === "") {
+      return;
     }
-    store.addUserContact(userEmail.value)
+    await store.addUserContact(userEmail.value);
+    userEmail.value = "";
   };
 </script>

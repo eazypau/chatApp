@@ -1,7 +1,7 @@
-import { getDownloadURL, ref, uploadBytesResumable } from '@firebase/storage';
-import { defineStore } from 'pinia';
-import { contactsObj, userObj } from '../classes/type';
-import { updateUserAccEmail } from '../firebase/auth';
+import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
+import { defineStore } from "pinia";
+import { contactsObj, userObj } from "../classes/type";
+import { updateUserAccEmail } from "../firebase/auth";
 import {
   collection,
   doc,
@@ -11,9 +11,9 @@ import {
   query,
   addDoc,
   getDocs,
-} from '@firebase/firestore';
-import { db, storage } from '../firebase/firebase';
-import { updateUserEmail, updateUserName, updateUserPhoto } from '../firebase/profile';
+} from "@firebase/firestore";
+import { db, storage } from "../firebase/firebase";
+import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
 
 interface ChatState {
   user: string;
@@ -21,9 +21,9 @@ interface ChatState {
   contactList: contactsObj[];
 }
 
-export const useStore = defineStore('store', {
+export const useStore = defineStore("store", {
   state: (): ChatState => ({
-    user: '',
+    user: "",
     profile: {} as userObj,
     contactList: [],
   }),
@@ -38,7 +38,7 @@ export const useStore = defineStore('store', {
   actions: {
     async fetchUserProfile() {
       try {
-        const docRef = doc(db, 'userCollection', this.user);
+        const docRef = doc(db, "userCollection", this.user);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           console.log(docSnap.data());
@@ -65,24 +65,24 @@ export const useStore = defineStore('store', {
         const storageRef = ref(storage, uid);
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on(
-          'state_changed',
+          "state_changed",
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload is ' + progress + '% done');
+            console.log("Upload is " + progress + "% done");
             if (progress === 100) {
               // store.commit('loadingStatus', false);
               // store.commit('changeImgSrc', URL.createObjectURL(file));
-              alert('Upload complete!');
+              alert("Upload complete!");
             }
           },
           (error) => {
-            console.log('Fail to upload new profle picture...');
+            console.log("Fail to upload new profle picture...");
             console.log(error);
-            alert('Failed to update profile picture...');
+            alert("Failed to update profile picture...");
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              console.log('File available at', downloadURL);
+              console.log("File available at", downloadURL);
               this.profile.photo = downloadURL;
               updateUserPhoto(this.user, downloadURL);
             });
@@ -92,38 +92,57 @@ export const useStore = defineStore('store', {
     },
     async addUserContact(email: string) {
       // search profile by email
-      let contacts = [];
-      const userCollectionRef = collection(db, 'userCollection');
-      const userContactCollectionRef = collection(db, 'userCollection', this.user, 'contacts');
-      const q: any = query(userCollectionRef, where('email', '==', email));
+      let contacts: any = {};
+      const userCollectionRef = collection(db, "userCollection");
+      const userContactCollectionRef = collection(db, "userCollection", this.user, "contacts");
+      const q: any = query(userCollectionRef, where("email", "==", email));
       // if exist add
       const findDoc: any = await getDocs(q);
-      if (findDoc.length > 0) {
-        try {
-          findDoc.forEach((doc: any) => {
-            contacts.push(doc.data());
-          });
-          const addContactDoc = await addDoc(userContactCollectionRef, contacts[0]);
-          console.log(addContactDoc.id);
-          const updateDocWithId = await updateDoc(
-            doc(db, 'userCollection', this.user, 'contacts', addContactDoc.id),
-            {
-              docId: addContactDoc.id,
-            }
-          );
-          // trigger fetch contacts
-          await this.fetchContactList();
-        } catch (error) {
-          console.log(error);
-        }
+      // findDoc.forEach((doc: any) => {
+      //   // contacts.push(doc.data());
+      //   contacts = doc.data();
+      //   console.log(doc.data());
+
+      // });
+      try {
+        findDoc.forEach((doc: any) => {
+          // contacts.push(doc.data());
+          contacts = doc.data();
+        });
+        const addContactDoc = await addDoc(userContactCollectionRef, contacts);
+        console.log(addContactDoc.id);
+        const updateDocWithId = await updateDoc(
+          doc(db, "userCollection", this.user, "contacts", addContactDoc.id),
+          {
+            docId: addContactDoc.id,
+          }
+        );
+        // trigger fetch contacts
+        await this.fetchContactList();
+      } catch (error) {
+        console.log(error);
       }
     },
     async fetchContactList() {
-      const userContactCollectionRef = collection(db, 'userCollection', this.user, 'contacts');
+      this.contactList = [];
+      const userContactCollectionRef = collection(db, "userCollection", this.user, "contacts");
       const querySnapshot = await getDocs(userContactCollectionRef);
       querySnapshot.forEach((doc: any) => {
         this.contactList.push(doc.data());
       });
+    },
+    //* for creating/saving chat
+    //* maybe save the id as an array in participants (2 elements in an array)
+    //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
+    async createChat(chatDoc: any) {
+      const chatCollection = collection(db, "chats");
+      const creatChatDoc: any = addDoc(chatCollection, chatDoc);
+      const updateDocWithId = await updateDoc(doc(db, "chats", creatChatDoc.id), {
+        id: creatChatDoc.id,
+      });
+    },
+    async sendMessage(message: any) {
+      console.log("send message");
     },
   },
 });
