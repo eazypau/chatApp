@@ -1,15 +1,18 @@
 <template>
   <div
     :class="[
-      message.name !== currentUserName ? 'justify-start' : 'justify-end',
+      message.senderName !== profile.name ? 'justify-start' : 'justify-end',
       'w-full mb-2 flex',
     ]"
-    v-for="message in messageList.messages"
-    :key="message"
   >
-    <div class="rounded-md bg-gray-200 px-2 py-1 w-max">
+    <div class="rounded-md bg-gray-200 px-5 py-2 w-max">
       <!-- chat ballon -->
-      <p>{{ message.message }}</p>
+      <p>
+        {{ message.text }}
+        <!-- <span class="msgFooter relative ml-2 -right-3 -bottom-1">{{
+          String(message.sentAt.toDate()).substring(16, 21)
+        }}</span> -->
+      </p>
     </div>
   </div>
 </template>
@@ -17,13 +20,25 @@
   import { defineComponent } from "vue";
   import { ref } from "@vue/reactivity";
   import useDummy from "../../composable/useDummy";
+  import { useStore } from "../../store/store";
 
   export default defineComponent({
-    props: ["messageList"],
+    props: ["message"],
     setup(props) {
-      const { currentUserName } = useDummy();
-      const isMatch = ref(false);
-      return { currentUserName };
+      // const { currentUserName } = useDummy();
+      // const isMatch = ref(false);
+      const store = useStore();
+      const profile = store.getProfile
+      //* reference: https://www.py4u.net/discuss/299247
+      // const date = props.message.sentAt.toDate();
+      // console.log(String(date).substring(15,21));
+
+      return { profile };
     },
   });
 </script>
+<style>
+  .msgFooter {
+    font-size: 10px;
+  }
+</style>

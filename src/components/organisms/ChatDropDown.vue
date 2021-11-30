@@ -18,7 +18,7 @@
           <div class="px-1 py-1">
             <MenuItem v-slot="{ active }">
               <button
-                @click="emit('viewContactDetails')"
+                @click="$emit('viewContactDetails')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
@@ -30,7 +30,7 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="emit('deleteChat')"
+                @click="$emit('deleteChat')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
@@ -47,9 +47,5 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue';
-  const emit = defineEmits<{
-    (e: 'viewContactDetails'): void;
-    (e: 'deleteChat'): void;
-  }>();
+  import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 </script>

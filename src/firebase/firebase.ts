@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, collection } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth, onAuthStateChanged, Unsubscribe } from "firebase/auth";
 
@@ -16,6 +16,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
+const userProfileCollection = collection(db, "userCollection")
+const chatCollection = collection(db, "chats")
 const storage = getStorage(); 
 const auth = getAuth()
 const getCurrentUser = () => {
@@ -31,7 +33,7 @@ const getCurrentUser = () => {
   })
 }
 
-export { db, storage, auth, getCurrentUser };
+export { db, userProfileCollection, chatCollection, storage, auth, getCurrentUser };
 
 //* access/create sub-collection, reference: https://firebase.google.com/docs/firestore/data-model
 //* maybe need to use arrayUnion, reference: https://firebase.google.com/docs/firestore/manage-data/add-data

@@ -14,7 +14,8 @@ const signInExistingUser = (email: string, password: string) => {
     .then((userCred) => {
       const user = userCred.user;
       // store.user = user.uid;
-      return router.push({ name: 'Home' });
+      localStorage.setItem("firebaseToken", user.uid)
+      router.push({ name: 'Home' });
     })
     .catch((err) => {
       console.log(err.message);
@@ -24,6 +25,7 @@ const signInExistingUser = (email: string, password: string) => {
 const logOutUser = () => {
   signOut(auth)
     .then(() => {
+      localStorage.removeItem("firebaseToken")
       return router.push({ name: 'Login' });
     })
     .catch((err) => {

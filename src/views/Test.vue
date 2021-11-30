@@ -6,15 +6,15 @@
       <button @click="showErrorMessage" class="border py-1 px-3 bg-sky-400">
         show Error
       </button>
-      <button @click="addElementIntoDocArray" class="border py-1 px-3 bg-sky-400">
-        Click to update doc
+      <button @click="createChat" class="border py-1 px-3 bg-sky-400">
+        Click to add doc
       </button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-  import { arrayUnion, doc, setDoc, updateDoc } from '@firebase/firestore';
-  import { db, getCurrentUser } from '../firebase/firebase';
+  import { addDoc, arrayUnion, doc, serverTimestamp, setDoc, updateDoc } from '@firebase/firestore';
+  import { chatCollection, db, getCurrentUser, userProfileCollection } from '../firebase/firebase';
   import Notification from '../components/molecules/Notification.vue';
   import { ref } from '@vue/reactivity';
 
@@ -50,6 +50,39 @@
     showNotification.value = true;
     setTimeout(() => (showNotification.value = false), 2000);
   };
+
+  const createChat = async () => {
+    const chatDoc = {
+      members: ['wcWpBlusTXPqsN8AitgVCVnqUNj1', 'rCpkBvGWhWRI5Bvi4EipOZ1LFEk1'],
+      createdBy: 'wcWpBlusTXPqsN8AitgVCVnqUNj1',
+      type: 'private'
+    }
+      // const chatCollection = collection(db, "chats");
+      const createChatDoc: any = await addDoc(chatCollection, {
+        members: chatDoc.members,
+        recentMessage: {
+          messageText: "",
+          sendBy: "",
+          sentAt: "",
+          senderName: "",
+        },
+        createdAt: serverTimestamp(),
+        createdBy: chatDoc.createdBy,
+        type: chatDoc.type,
+      });
+      const docRef = doc(userProfileCollection, 'wcWpBlusTXPqsN8AitgVCVnqUNj1');
+      await updateDoc(doc(chatCollection, createChatDoc.id), {
+        id: createChatDoc.id,
+      });
+      // add chat id into current user
+      await updateDoc(docRef, {
+        chatGroupIds: arrayUnion(createChatDoc.id),
+      });
+      // add the chat id into the other user doc
+      await updateDoc(doc(db, "userCollection", chatDoc.members[1]), {
+        chatGroupIds: arrayUnion(createChatDoc.id),
+      });
+    }
 </script>
 <style>
   .viewHeight {
