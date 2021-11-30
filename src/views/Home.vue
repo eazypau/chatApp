@@ -2,7 +2,7 @@
   <div>
     <NavigationBar />
     <div class="flex viewHeight">
-      <transition name="addContact">
+      <transition name="addContactAnimate">
         <ContactList
           :contacts="contactList"
           @close-contact="showContact = false"
@@ -10,7 +10,7 @@
           v-if="showContact"
         />
       </transition>
-      <transition name="addContact">
+      <transition name="addContactAnimate">
         <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
       </transition>
       <div class="w-3/12 flex flex-col">
@@ -39,10 +39,10 @@
         <div v-if="!showProfile" class="bg-gray-100 flex-1">
           <!-- body -->
           <ChatContact
-            v-for="chatName in list"
+            v-for="chatName in chatList"
             :key="chatName.chatId"
             :item="chatName"
-            @passId="storeChatId"
+            @passId="viewChat"
           />
         </div>
       </div>
@@ -50,10 +50,11 @@
       <div class="w-9/12 flex">
         <!-- right panel -->
         <div class="flex flex-col h-full flex-1">
-          <div class="flex items-center justify-between py-2 px-4 bg-gray-300">
+          <div class="h-14 flex items-center justify-between py-2 px-4 bg-gray-300">
             <!-- right header -->
             <div class="flex items-center">
               <img
+                v-if="currentChatName !== ''"
                 class="h-10 rounded-full"
                 :src="
                   currentPhoto === ''
@@ -64,6 +65,7 @@
               <p class="px-3">{{ currentChatName }}</p>
             </div>
             <ChatDropDown
+              v-if="currentChatName !== ''"
               @view-contact-details="showOtherProfile = true"
               @delete-chat="deleteChatHistory"
             />
@@ -72,9 +74,12 @@
             <!-- body -->
             <div class="px-4 pt-2">
               <!-- messages -->
-              <ChatBallon v-for="item in listOfChatContent" :key="item.id" :messageList="item" />
+              <ChatBallon v-for="item in listOfChatContent" :key="item" :message="item" />
             </div>
-            <div class="w-full flex items-center justify-between py-3 px-5 bg-gray-300">
+            <div
+              v-if="currentChatName !== ''"
+              class="w-full flex items-center justify-between py-3 px-5 bg-gray-300"
+            >
               <input
                 type="text"
                 name="newMsg"
@@ -100,7 +105,7 @@
 </template>
 <script setup lang="ts">
   import { useStore } from "../store/store";
-  import useDummy from "../composable/useDummy";
+  // import useDummy from "../composable/useDummy";
   import { computed, ref } from "@vue/reactivity";
   import ChatContact from "../components/organisms/ChatContact.vue";
   import ChatBallon from "../components/molecules/ChatBallon.vue";
@@ -113,22 +118,32 @@
   import { auth } from "../firebase/firebase";
   import NavigationBar from "../components/organisms/NavigationBar.vue";
   import { contactsObj } from "../classes/type";
+  import { useRouter } from "vue-router";
 
-  const { chatList, chatContent } = useDummy();
-  const list = computed(() => chatList);
+  const router = useRouter();
+  const store = useStore();
+  // const { chatContent } = useDummy();
+  onAuthStateChanged(auth, async (user: any) => {
+    if (user) {
+      // console.log(user);
+      store.user = user.uid;
+      await store.fetchUserProfile();
+      await store.fetchContactList();
+      await store.fetchChatList();
+    } else {
+      router.push("/login");
+    }
+  });
+  // await store.fetchUserProfile();
+  // await store.fetchContactList();
+  // await store.fetchChatList();
+  
+  const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
-    if (currentChatId.value === "") {
+    if (store.getChatContent === []) {
       return [];
     }
-    return chatContent.filter((item: any) => {
-      return item.id === currentChatId.value;
-    });
-  });
-  const store = useStore();
-  onAuthStateChanged(auth, async (user: any) => {
-    store.user = user.uid;
-    await store.fetchUserProfile();
-    await store.fetchContactList();
+    return store.getChatContent;
   });
   const profileDoc = computed(() => {
     return store.getProfile;
@@ -145,6 +160,9 @@
     }
     return store.getContactList;
   });
+
+  console.log(chatList.value, profileDoc.value, contactList.value);
+  
   let currentChatName = ref("");
   let currentChatId = ref("");
   let currentPhoto = ref("");
@@ -158,46 +176,37 @@
   const createChatWindow = (contactDoc: contactsObj) => {
     const chatDocInfo = {
       members: [profileDoc.value.id, contactDoc.id],
-      recentMessage: {
-        messageText: "",
-        sendBy: "",
-        sentAt: "",
-      },
-      createdAt: "",
+      createdBy: profileDoc.value.id,
+      type: "private",
     };
-    // console.log(chatDocInfo);
+    console.log(chatDocInfo);
     // store.createChat(chatDocInfo);
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
   };
-  const storeChatId = (chatId: string, chatName: string) => {
+  const viewChat = async (chatId: string, chatName: string) => {
     currentChatId.value = chatId;
+    // const filterName = chatName.filter((item: string) => {
+    //   return item !== store.getProfile.id;
+    // });
+    // // console.log(filterName);
+    // const fetchingUser: any = await store.fetchOtherUserDetails(filterName[0]);
     currentChatName.value = chatName;
-  };
-  const openAddContact = () => {
-    console.log("open add contact...");
-  };
-  const openContactList = () => {
-    console.log("open contact list...");
+    await store.fetchCurrentChat(chatId);
   };
   const deleteChatHistory = () => {
     console.log("delete chat history...");
   };
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const newMessageObj = {
-      name: "Mona",
-      message: newMessage.value,
-      timeStamp: Date(),
+      senderName: profileDoc.value.name,
+      text: newMessage.value,
+      senderId: profileDoc.value.id,
+      chatId: currentChatId.value,
     };
-    for (let i = 0; i < chatContent.length; i++) {
-      const id = chatContent[i].id;
-      if (id === currentChatId.value) {
-        chatContent[i].messages.push(newMessageObj);
-        console.log(chatContent[i]);
-        break;
-      }
-    }
+    console.log(newMessageObj);
+    await store.sendMessage(newMessageObj);
     newMessage.value = "";
   };
 
@@ -209,6 +218,8 @@
   // TODO: implement firebase auth (createUser, login, logout and send new password)
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
   // TODO: implement firebase storage (save/read/delete profile image)
+  // TODO: add meta tags for SEO purposes
+  // TODO: touch up on the colors
   // set favicon
   // dynamic routing
   // error page
@@ -217,12 +228,12 @@
   .viewHeight {
     height: 97vh;
   }
-  .addContact-enter-active,
-  .addContact-leave-active {
+  .addContactAnimate-enter-active,
+  .addContactAnimate-leave-active {
     transition: opacity 0.4s ease;
   }
-  .addContact-enter-from,
-  .addContact-leave-to {
+  .addContactAnimate-enter-from,
+  .addContactAnimate-leave-to {
     opacity: 0;
   }
 </style>

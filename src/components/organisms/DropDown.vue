@@ -18,7 +18,7 @@
           <div class="px-1 py-1">
             <MenuItem v-slot="{ active }">
               <button
-                @click="emit('openAddContactWindow')"
+                @click="$emit('openAddContactWindow')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
@@ -30,7 +30,7 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="emit('openContactWindow')"
+                @click="$emit('openContactWindow')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
@@ -42,7 +42,7 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="emit('openProfile')"
+                @click="$emit('openProfile')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
@@ -73,12 +73,6 @@
 <script setup lang="ts">
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
   import { logOutUser } from '../../firebase/auth';
-
-  const emit = defineEmits<{
-    (e: "openAddContactWindow"): void;
-    (e: "openContactWindow"): void;
-    (e: "openProfile"): void;
-  }>();
   const logOut = () => {
     console.log("log out...");
     logOutUser()
