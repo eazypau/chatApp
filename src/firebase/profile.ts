@@ -1,12 +1,11 @@
-import { doc, getDoc, setDoc, updateDoc } from '@firebase/firestore';
-import { Profile } from '../classes/constructor';
+import { doc, setDoc, updateDoc } from '@firebase/firestore';
 import { userObj } from '../classes/type';
 import { userProfileCollection } from './firebase';
 
 const createUserProfile = async (userDetails: userObj) => {
   // console.log(userDetails);
   try {
-    setDoc(doc(userProfileCollection, userDetails.id), userDetails);
+    await setDoc(doc(userProfileCollection, userDetails.id), userDetails);
   } catch (error: any) {
     console.log(error.message);
   }

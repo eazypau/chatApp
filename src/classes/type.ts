@@ -3,13 +3,9 @@ type userObj = {
   name: string;
   email: string;
   photo: string;
-  chatGroupIds: [];
+  chatGroupIds: string[];
 };
-type messageObj = {
-  name: string;
-  text: string;
-  timeStamp: string;
-};
+
 type contactsObj = {
   name: string;
   email: string;
@@ -18,4 +14,24 @@ type contactsObj = {
   docId: string;
 };
 
-export { userObj, messageObj, contactsObj };
+type messageObj = {
+  sendBy: string;
+  senderName: string;
+  sentAt: Date;
+  text: string;
+};
+
+type currentChatObj = {
+  createdAt: Date;
+  createdBy: string;
+  id: string;
+  members: string[];
+  recentMessage: {
+    messageText: string;
+    sendBy: string;
+    senderName: string;
+    sentAt: Date;
+  };
+  type: string;
+};
+export { userObj, messageObj, contactsObj, currentChatObj };

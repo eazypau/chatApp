@@ -23,7 +23,10 @@
           :userEmail="profileDoc.email"
           :userName="profileDoc.name"
         />
-        <div v-if="!showProfile" class="flex items-center justify-between py-2 px-4 bg-gray-300">
+        <div
+          v-if="!showProfile"
+          class="flex items-center justify-between navigationHeight py-2 px-4 bg-gray-300"
+        >
           <!-- left header -->
           <img
             class="h-10 rounded-full"
@@ -50,12 +53,12 @@
       <div class="w-9/12 flex">
         <!-- right panel -->
         <div class="flex flex-col h-full flex-1">
-          <div class="h-14 flex items-center justify-between py-2 px-4 bg-gray-300">
+          <div class="navigationHeight flex items-center justify-between py-2 px-4 bg-gray-300">
             <!-- right header -->
             <div class="flex items-center">
               <img
                 v-if="currentChatName !== ''"
-                class="h-10 rounded-full"
+                class="w-10 h-10 rounded-full"
                 :src="
                   currentPhoto === ''
                     ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
@@ -72,13 +75,14 @@
           </div>
           <div class="bg-gray-100 flex-1 flex flex-col justify-between">
             <!-- body -->
-            <div class="px-4 pt-2">
+            <div id="container" class="px-4 pt-2 bodyHeight overflow-y-scroll">
               <!-- messages -->
               <ChatBallon v-for="item in listOfChatContent" :key="item" :message="item" />
+              <span id="dummy"></span>
             </div>
             <div
               v-if="currentChatName !== ''"
-              class="w-full flex items-center justify-between py-3 px-5 bg-gray-300"
+              class="w-full inputBarHeight flex items-center justify-between py-3 px-5 bg-gray-300"
             >
               <input
                 type="text"
@@ -106,7 +110,7 @@
 <script setup lang="ts">
   import { useStore } from "../store/store";
   // import useDummy from "../composable/useDummy";
-  import { computed, ref } from "@vue/reactivity";
+  import { computed, ref, toRef, toRefs } from "@vue/reactivity";
   import ChatContact from "../components/organisms/ChatContact.vue";
   import ChatBallon from "../components/molecules/ChatBallon.vue";
   import DropDown from "../components/organisms/DropDown.vue";
@@ -119,9 +123,13 @@
   import NavigationBar from "../components/organisms/NavigationBar.vue";
   import { contactsObj } from "../classes/type";
   import { useRouter } from "vue-router";
+  import { Message } from "../classes/constructor";
+  import { watch } from "@vue/runtime-core";
+  import useDOM from "../composable/useDOM";
 
   const router = useRouter();
   const store = useStore();
+  const { slideDown } = useDOM();
   // const { chatContent } = useDummy();
   onAuthStateChanged(auth, async (user: any) => {
     if (user) {
@@ -137,7 +145,7 @@
   // await store.fetchUserProfile();
   // await store.fetchContactList();
   // await store.fetchChatList();
-  
+
   const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
     if (store.getChatContent === []) {
@@ -145,9 +153,7 @@
     }
     return store.getChatContent;
   });
-  const profileDoc = computed(() => {
-    return store.getProfile;
-  });
+  const profileDoc = computed(() => store.getProfile);
   const profilePic = computed(() => {
     if (store.getProfile.photo === "") {
       return "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg";
@@ -161,10 +167,19 @@
     return store.getContactList;
   });
 
-  console.log(chatList.value, profileDoc.value, contactList.value);
-  
+  watch(
+    () => listOfChatContent.value,
+    (prev, next) => {
+      slideDown("dummy");
+      // const container = document.getElementById("dummy");
+      // container.scrollTo = container.scrollHeight;
+    },
+    { deep: true }
+  );
+
   let currentChatName = ref("");
-  let currentChatId = ref("");
+  // let currentChatId = ref("");
+  const currentChatId = computed(() => store.getCurrentChatId);
   let currentPhoto = ref("");
   let newMessage = ref("");
   let showProfile = ref(false);
@@ -179,42 +194,48 @@
       createdBy: profileDoc.value.id,
       type: "private",
     };
-    console.log(chatDocInfo);
-    // store.createChat(chatDocInfo);
+    // console.log(chatDocInfo);
+    store.currentChatInfo = chatDocInfo;
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
   };
-  const viewChat = async (chatId: string, chatName: string) => {
-    currentChatId.value = chatId;
-    // const filterName = chatName.filter((item: string) => {
-    //   return item !== store.getProfile.id;
-    // });
-    // // console.log(filterName);
-    // const fetchingUser: any = await store.fetchOtherUserDetails(filterName[0]);
+  //TODO: need to implement autoScroll to bottom when view chat
+  const viewChat = async (chatId: string, chatName: string, chatPhoto: string) => {
+    const container = document.getElementById("dummy");
+    // currentChatId.value = chatId;
+    store.currentChatId = chatId;
     currentChatName.value = chatName;
+    currentPhoto.value = chatPhoto;
     await store.fetchCurrentChat(chatId);
+    // container.scrollIntoView({ behavior: "smooth" });
+    container.scrollTo = container.scrollHeight;
   };
   const deleteChatHistory = () => {
     console.log("delete chat history...");
   };
   const sendMessage = async () => {
-    const newMessageObj = {
-      senderName: profileDoc.value.name,
-      text: newMessage.value,
-      senderId: profileDoc.value.id,
-      chatId: currentChatId.value,
-    };
-    console.log(newMessageObj);
-    await store.sendMessage(newMessageObj);
+    const newMessageContent = new Message(
+      profileDoc.value.name,
+      newMessage.value,
+      profileDoc.value.id,
+      currentChatId.value
+    );
+    console.log(newMessageContent);
+    await store.sendMessage(newMessageContent);
     newMessage.value = "";
+    // const container = document.getElementById("container");
+    // container.scrollIntoView({ behavior: "smooth" });
+    // container.scrollTop = container.scrollHeight;
+    const container = document.getElementById("dummy");
+    container.scrollIntoView({ behavior: "smooth" });
   };
 
   //! target to get everything done by 7th Nov
-  // TODO: create chat ballons, chat pills, modal and dropdown components
-  // TODO: create the chat window at home page
-  // TODO: use which version of firebase? v8 or v9?
-  // TODO: implement firebase into the project
+  //// create chat ballons, chat pills, modal and dropdown components
+  //// create the chat window at home page
+  //// use which version of firebase? v8 or v9?
+  //// implement firebase into the project
   // TODO: implement firebase auth (createUser, login, logout and send new password)
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
   // TODO: implement firebase storage (save/read/delete profile image)
@@ -227,6 +248,13 @@
 <style>
   .viewHeight {
     height: 97vh;
+  }
+  .navigationHeight,
+  .inputBarHeight {
+    height: 6vh;
+  }
+  .bodyHeight {
+    height: 85vh;
   }
   .addContactAnimate-enter-active,
   .addContactAnimate-leave-active {

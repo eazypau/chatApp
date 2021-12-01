@@ -72,9 +72,12 @@
 </template>
 <script setup lang="ts">
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
-  import { logOutUser } from '../../firebase/auth';
+  import { logOutUser } from "../../firebase/auth";
+  import { useStore } from "../../store/store";
+  const store = useStore();
   const logOut = () => {
     console.log("log out...");
-    logOutUser()
+    logOutUser();
+    store.$reset();
   };
 </script>

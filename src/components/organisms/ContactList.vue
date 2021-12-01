@@ -26,7 +26,7 @@
         class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
       >
         <img
-          class="h-8 rounded-full"
+          class="w-8 h-8 rounded-full"
           :src="
             friend.photo === ''
               ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'

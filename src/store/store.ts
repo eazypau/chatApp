@@ -1,6 +1,6 @@
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { defineStore } from "pinia";
-import { contactsObj, userObj } from "../classes/type";
+import { contactsObj, currentChatObj, messageObj, userObj } from "../classes/type";
 import { updateUserAccEmail } from "../firebase/auth";
 import {
   collection,
@@ -18,13 +18,18 @@ import {
 } from "@firebase/firestore";
 import { chatCollection, db, storage, userProfileCollection } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
+import useDOM from "../composable/useDOM";
+
+const { slideDown } = useDOM();
 
 interface ChatState {
-  user: string | null;
+  user: any;
   profile: any;
   contactList: contactsObj[];
-  chatList: any;
-  currentChatContent: any;
+  chatList: messageObj[];
+  currentChatContent: currentChatObj[];
+  currentChatInfo: any;
+  currentChatId: string;
 }
 
 export const useStore = defineStore("store", {
@@ -34,6 +39,8 @@ export const useStore = defineStore("store", {
     contactList: [],
     chatList: [],
     currentChatContent: [],
+    currentChatInfo: {},
+    currentChatId: "",
   }),
   getters: {
     getProfile(state) {
@@ -47,6 +54,9 @@ export const useStore = defineStore("store", {
     },
     getChatContent(state) {
       return state.currentChatContent;
+    },
+    getCurrentChatId(state) {
+      return state.currentChatId;
     },
   },
   actions: {
@@ -108,16 +118,24 @@ export const useStore = defineStore("store", {
     async addUserContact(email: string) {
       // search profile by email
       let contacts: any = {};
-      // const userCollectionRef = collection(db, "userCollection");
+      let duplicate = [];
       const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
+      const checkDuplicate = query(userContactCollectionRef, where("email", "==", email));
+      const getDuplciate = await getDocs(checkDuplicate);
+      try {
+        getDuplciate.forEach((doc: any) => {
+          duplicate.push(doc.data());
+        });
+      } catch (error) {
+        console.log(error);
+      }
+      if (duplicate.length > 0) {
+        alert("contact already exist!");
+        return
+      }
       const q: any = query(userProfileCollection, where("email", "==", email));
       // if exist add
       const findDoc: any = await getDocs(q);
-      // findDoc.forEach((doc: any) => {
-      //   // contacts.push(doc.data());
-      //   contacts = doc.data();
-      //   console.log(doc.data());
-
       // });
       try {
         findDoc.forEach((doc: any) => {
@@ -133,19 +151,29 @@ export const useStore = defineStore("store", {
           }
         );
         // trigger fetch contacts
-        await this.fetchContactList();
+        if (!this.contactList) {
+          await this.fetchContactList();
+        }
+        alert("successfully add contact.");
       } catch (error) {
         console.log(error);
       }
     },
     async fetchContactList() {
-      this.contactList = [];
+      // this.contactList = [];
       try {
         const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
         const queryDocs = query(userContactCollectionRef);
-        const querySnapshot = await getDocs(queryDocs);
-        querySnapshot.forEach((doc: any) => {
-          this.contactList.push(doc.data());
+        // const querySnapshot = onSnapshot(queryDocs);
+        // querySnapshot.forEach((doc: any) => {
+        //   this.contactList.push(doc.data());
+        // });
+        const unsubscribe = onSnapshot(queryDocs, (querySnapshot: any) => {
+          this.contactList = [];
+          querySnapshot.forEach((doc: any) => {
+            this.contactList.push(doc.data());
+          });
+          // console.log("Current messages ", this.currentChatContent.join(", "));
         });
         // console.log(this.contactList);
       } catch (error) {
@@ -158,7 +186,7 @@ export const useStore = defineStore("store", {
     //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async fetchChatList() {
       this.chatList = [];
-      if (this.profile.chatGroupIds.length > 0) {
+      if (this.profile.chatGroupIds.length) {
         // const chatCollection = collection(db, "chats")
         try {
           for (let i = 0; i < this.profile.chatGroupIds.length; i++) {
@@ -176,24 +204,27 @@ export const useStore = defineStore("store", {
     },
     async fetchCurrentChat(chatId: string) {
       // this.currentChatContent = [];
-      const findCurrentChatContent = query(collection(chatCollection, chatId, "messages"), orderBy('sentAt'));
+      const findCurrentChatContent = query(
+        collection(chatCollection, chatId, "messages"),
+        orderBy("sentAt")
+      );
       // const fetchChatMessages = await getDocs(findCurrentChatContent);
       // fetchChatMessages.forEach((doc) => {
       //   this.currentChatContent.push(doc.data());
       // });
-      const unsubscribe = onSnapshot(findCurrentChatContent, (querySnapshot:any) => {
+      const unsubscribe = onSnapshot(findCurrentChatContent, (querySnapshot: any) => {
         this.currentChatContent = [];
-        querySnapshot.forEach((doc:any) => {
+        querySnapshot.forEach((doc: any) => {
           this.currentChatContent.push(doc.data());
         });
         // console.log("Current messages ", this.currentChatContent.join(", "));
       });
-      console.log(this.currentChatContent);
+      // console.log(this.currentChatContent);
     },
-    async createChat(chatDoc: any) {
+    async createChat() {
       // const chatCollection = collection(db, "chats");
       const createChatDoc: any = await addDoc(chatCollection, {
-        members: chatDoc.members,
+        members: this.currentChatInfo.members,
         recentMessage: {
           messageText: "",
           sendBy: "",
@@ -201,8 +232,8 @@ export const useStore = defineStore("store", {
           senderName: "",
         },
         createdAt: serverTimestamp(),
-        createdBy: chatDoc.createdBy,
-        type: chatDoc.type,
+        createdBy: this.currentChatInfo.createdBy,
+        type: this.currentChatInfo.type,
       });
       const docRef = doc(userProfileCollection, this.user);
       await updateDoc(doc(chatCollection, createChatDoc.id), {
@@ -213,29 +244,45 @@ export const useStore = defineStore("store", {
         chatGroupIds: arrayUnion(createChatDoc.id),
       });
       // add the chat id into the other user doc
-      await updateDoc(doc(db, "userCollection", chatDoc.members[1]), {
+      await updateDoc(doc(db, "userCollection", this.currentChatInfo.members[1]), {
         chatGroupIds: arrayUnion(createChatDoc.id),
       });
+      return createChatDoc.id;
     },
-    async sendMessage(message: any) {
-      console.log("send message");
-      const chatDocRef = doc(chatCollection, message.chatId);
-      const messageSubCollection = collection(chatCollection, message.chatId, "messages");
+    async sendMessage(message: {
+      senderName: string;
+      text: string;
+      senderId: string;
+      chatId: string;
+    }) {
+      let firstTime = false;
+      let messageContent = message;
+      if (message.chatId === "") {
+        const getId = await this.createChat();
+        messageContent.chatId = getId;
+        firstTime = true;
+        this.currentChatId = getId;
+        console.log(messageContent);
+      }
+      const chatDocRef = doc(chatCollection, messageContent.chatId);
+      const messageSubCollection = collection(chatCollection, messageContent.chatId, "messages");
       try {
         const createMsgDoc = await addDoc(messageSubCollection, {
-          text: message.text,
+          text: messageContent.text,
           sentAt: serverTimestamp(),
-          sendBy: message.senderId,
-          senderName: message.senderName,
+          sendBy: messageContent.senderId,
+          senderName: messageContent.senderName,
         });
         // after that update the chatsDoc in the recentMessage
         await updateDoc(chatDocRef, {
-          "recentMessage.messageText": message.text,
-          "recentMessage.sendBy": message.senderId,
+          "recentMessage.messageText": messageContent.text,
+          "recentMessage.sendBy": messageContent.senderId,
           "recentMessage.sentAt": serverTimestamp(),
-          "recentMessage.senderName": message.senderName,
+          "recentMessage.senderName": messageContent.senderName,
         });
-        // await this.fetchCurrentChat(message.chatId);
+        if (firstTime) {
+          await this.fetchCurrentChat(messageContent.chatId);
+        }
       } catch (error) {
         console.log(error);
       }
