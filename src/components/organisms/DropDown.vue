@@ -18,11 +18,11 @@
           <div class="px-1 py-1">
             <MenuItem v-slot="{ active }">
               <button
-                @click="$emit('openAddContactWindow')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
+                @click="$emit('openAddContactWindow')"
               >
                 <i class="bi bi-person-plus-fill pr-3"></i>
                 Add Contact
@@ -30,11 +30,11 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="$emit('openContactWindow')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
+                @click="$emit('openContactWindow')"
               >
                 <i class="bi bi-person-lines-fill pr-3"></i>
                 <p class="pb-1">Contacts</p>
@@ -42,11 +42,11 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="$emit('openProfile')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
+                @click="$emit('openProfile')"
               >
                 <i class="bi bi-eyeglasses pr-3"></i>
                 <p class="pb-1">Profile</p>
@@ -54,11 +54,11 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="logOut"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 pt-1 pb-2 text-sm',
                 ]"
+                @click="logOut"
               >
                 <i class="bi bi-box-arrow-left pr-3"></i>
                 <p class="pb-1">Sign Out</p>

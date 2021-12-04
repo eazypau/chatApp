@@ -1,7 +1,7 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-gray-300 bg-opacity-75">
     <transition name="modal">
-      <Notification v-if="showMsg" :errorMsg="popUpMsg" />
+      <Notification v-if="showMsg" :error-msg="popUpMsg" />
     </transition>
 
     <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
@@ -11,31 +11,31 @@
         <form class="mt-3">
           <TextInput
             name="Name"
-            inputName="name"
+            input-name="name"
             :value="name"
             @update:model-value="name = $event"
           />
           <TextInput
             class="mt-3"
             name="Email"
-            inputName="email"
+            input-name="email"
             :value="email"
             @update:model-value="email = $event"
           />
           <PwInput
             name="Password"
-            inputName="pasword"
+            input-name="pasword"
             :value="password"
-            @update:model-value="password = $event"
             class="mt-3"
+            @update:model-value="password = $event"
           />
           <PwInput
             name="ConfirmPassword"
-            inputName="confirmPassword"
+            input-name="confirmPassword"
             :value="confirmPassword"
+            class="mt-3"
             @update:model-value="confirmPassword = $event"
             @keydown.enter="createUser"
-            class="mt-3"
           />
           <div class="flex items-center justify-center mt-4">
             <button class="authBtn" type="button" @click="createUser">Register</button>

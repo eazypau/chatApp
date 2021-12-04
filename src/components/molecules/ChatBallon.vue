@@ -1,9 +1,6 @@
 <template>
   <div
-    :class="[
-      message.senderName !== profile.name ? 'justify-start' : 'justify-end',
-      'w-full mb-2 flex',
-    ]"
+    :class="[message.sendBy !== profile.id ? 'justify-start' : 'justify-end', 'w-full mb-2 flex']"
   >
     <div class="rounded-md bg-gray-200 px-5 py-2 w-max">
       <!-- chat ballon -->
@@ -18,17 +15,22 @@
 </template>
 <script lang="ts">
   import { defineComponent } from "vue";
-  import { ref } from "@vue/reactivity";
-  import useDummy from "../../composable/useDummy";
+  // import { ref } from "@vue/reactivity";
+  // import useDummy from "../../composable/useDummy";
   import { useStore } from "../../store/store";
 
   export default defineComponent({
-    props: ["message"],
-    setup(props) {
+    props: {
+      message: {
+        type: Object,
+        default: () => {},
+      },
+    },
+    setup() {
       // const { currentUserName } = useDummy();
       // const isMatch = ref(false);
       const store = useStore();
-      const profile = store.getProfile
+      const profile = store.getProfile;
       //* reference: https://www.py4u.net/discuss/299247
       // const date = props.message.sentAt.toDate();
       // console.log(String(date).substring(15,21));

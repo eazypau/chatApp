@@ -8,17 +8,17 @@
         <form class="mt-3">
           <TextInput
             name="Email"
-            inputName="email"
+            input-name="email"
             :value="email"
             @update:model-value="email = $event"
           />
           <PwInput
             name="Password"
-            inputName="pasword"
+            input-name="pasword"
             :value="password"
+            class="mt-3"
             @update:model-value="password = $event"
             @keydown.enter="login"
-            class="mt-3"
           />
           <div class="flex items-center justify-between mt-4">
             <router-link to="/forgot-password" class="text-sm text-gray-600 hover:text-gray-500"

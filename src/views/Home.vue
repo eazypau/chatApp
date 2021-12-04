@@ -109,8 +109,7 @@
 </template>
 <script setup lang="ts">
   import { useStore } from "../store/store";
-  // import useDummy from "../composable/useDummy";
-  import { computed, ref, toRef, toRefs } from "@vue/reactivity";
+  import { computed, ref } from "@vue/reactivity";
   import ChatContact from "../components/organisms/ChatContact.vue";
   import ChatBallon from "../components/molecules/ChatBallon.vue";
   import DropDown from "../components/organisms/DropDown.vue";
@@ -199,6 +198,7 @@
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
+    // TODO: need to be able to check whether chat exist
   };
   //TODO: need to implement autoScroll to bottom when view chat
   const viewChat = async (chatId: string, chatName: string, chatPhoto: string) => {

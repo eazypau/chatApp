@@ -18,11 +18,11 @@
           <div class="px-1 py-1">
             <MenuItem v-slot="{ active }">
               <button
-                @click="$emit('viewContactDetails')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
+                @click="$emit('viewContactDetails')"
               >
                 <i class="bi bi-binoculars-fill pr-3"></i>
                 View Contact
@@ -30,11 +30,11 @@
             </MenuItem>
             <MenuItem v-slot="{ active }">
               <button
-                @click="$emit('deleteChat')"
                 :class="[
                   active ? 'bg-violet-500 text-white' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
+                @click="$emit('deleteChat')"
               >
                 <i class="bi bi-trash-fill pr-3"></i>
                 Chat History

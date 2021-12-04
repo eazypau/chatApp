@@ -18,9 +18,6 @@ import {
 } from "@firebase/firestore";
 import { chatCollection, db, storage, userProfileCollection } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
-import useDOM from "../composable/useDOM";
-
-const { slideDown } = useDOM();
 
 interface ChatState {
   user: any;
@@ -113,7 +110,9 @@ export const useStore = defineStore("store", {
             });
           }
         );
-      } catch (error) {}
+      } catch (error:any) {
+        alert(error.message);
+      }
     },
     async addUserContact(email: string) {
       // search profile by email

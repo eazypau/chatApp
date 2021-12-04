@@ -8,7 +8,7 @@
     <div class="py-10 px-8 w-full flex-1">
       <div class="flex justify-center mb-7 relative">
         <div class="w-40 h-40 overflow-hidden rounded-full bg-gray-200">
-          <img :src="profileImg" />
+          <img :src="profileImg" class="object-cover object-center w-full h-full" />
         </div>
         <div class="absolute bottom-0 ml-28">
           <p>
@@ -21,16 +21,8 @@
               @change="updateProfilePic($event)"
             />
           </p>
-          <p>
+          <p class="h-8 w-8 rounded-full bg-sky-400 flex justify-center items-center hover:text-white cursor-pointer">
             <label
-              class="
-                border border-black
-                rounded-full
-                px-2
-                py-2
-                bg-white
-                hover:bg-black hover:text-white
-              "
               for="file"
               style="cursor: pointer"
             >
@@ -41,7 +33,7 @@
       </div>
       <table>
         <tr>
-          <td class="xl:text-lg">Name:</td>
+          <td class="xl:text-lg font-bold">Name:</td>
           <td>
             <p v-if="!edit" class="px-1 py-1 xl:text-lg">{{ userName }}</p>
             <div v-else>
@@ -55,7 +47,7 @@
           </td>
         </tr>
         <tr>
-          <td class="xl:text-lg">Email:</td>
+          <td class="xl:text-lg font-bold">Email:</td>
           <td>
             <p v-if="!edit" class="px-1 py-1 xl:text-lg">{{ userEmail }}</p>
             <div v-else>
@@ -74,12 +66,12 @@
           <button
             type="button"
             @click="edit = true"
-            class="rounded px-3 py-0.5 bg-sky-400 hover:bg-sky-200 mr-2"
+            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
           >
             <i class="bi bi-pencil-square text-xl mr-1"></i>
             Edit
           </button>
-          <button type="button" class="rounded px-3 py-0.5 bg-red-400 hover:bg-red-200">
+          <button type="button" class="rounded px-3 py-0.5 bg-red-400 hover:text-white">
             <i class="bi bi-trash-fill text-xl"></i>
             Delete
           </button>
@@ -88,7 +80,7 @@
           <button
             type="button"
             @click="updateProfile"
-            class="rounded px-3 py-0.5 bg-sky-400 hover:bg-sky-200 mr-2"
+            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
           >
             <i class="bi bi-check2-square text-xl mr-1"></i>
             Update
@@ -96,7 +88,7 @@
           <button
             type="button"
             @click="cancelEdit"
-            class="rounded px-3 py-0.5 bg-red-400 hover:bg-red-200"
+            class="rounded px-3 py-0.5 bg-red-400 hover:text-white"
           >
             <i class="bi bi-x text-xl"></i>
             Cancel
@@ -131,7 +123,7 @@
       };
 
       const updateProfile = async () => {
-        const newProfileInfo = {
+        const newProfileInfo:any = {
           name: name.value,
           email: email.value,
         };

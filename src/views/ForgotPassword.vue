@@ -7,7 +7,7 @@
         <form>
           <TextInput
             name="Email"
-            inputName="email"
+            input-name="email"
             :value="email"
             @update:model-value="email = $event"
           />

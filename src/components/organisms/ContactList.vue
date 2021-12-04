@@ -13,7 +13,7 @@
     "
   >
     <div class="w-96 h-72 bg-white border rounded-md overflow-hidden relative">
-      <button @click="$emit('closeContact')" class="absolute right-2 top-2 p-1">
+      <button class="absolute right-2 top-2 p-1" @click="$emit('closeContact')">
         <i class="bi bi-x-lg"></i>
       </button>
       <div class="px-6 py-3 bg-sky-100">
@@ -22,8 +22,8 @@
       <div
         v-for="friend in contacts"
         :key="friend"
-        @click="$emit('createChat', friend)"
         class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
+        @click="$emit('createChat', friend)"
       >
         <img
           class="w-8 h-8 rounded-full"
