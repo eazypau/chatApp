@@ -20,8 +20,8 @@
         <p class="font-semibold">Contact List</p>
       </div>
       <div
-        v-for="friend in contacts"
-        :key="friend"
+        v-for="friend, index in contacts"
+        :key="index"
         class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
         @click="$emit('createChat', friend)"
       >
@@ -42,8 +42,18 @@
   import { defineComponent } from "vue";
 
   export default defineComponent({
-    // todo: might need use validator
-    props: ["contacts"],
-    setup() {},
+    props: {
+      contacts: {
+        type: [Array, Object],
+        default: () => [],
+        //* https://antenna.io/blog/2017/12/custom-validator-function-that-checks-if-object-properties-exist-in-vue-js/
+        // validator: (items: []) => {
+        //   const validItems = items.filter((item: {}) => {
+        //     // eslint-disable-next-line no-prototype-builtins
+        //     return item.hasOwnProperty('name') && item.hasOwnProperty('photo')
+        //   })
+        // }
+      }
+    },
   });
 </script>

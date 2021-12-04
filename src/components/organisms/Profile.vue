@@ -10,7 +10,7 @@
         <div class="w-40 h-40 overflow-hidden rounded-full bg-gray-200">
           <img :src="profileImg" class="object-cover object-center w-full h-full" />
         </div>
-        <div class="absolute bottom-0 ml-28">
+        <div v-if="isUser" class="absolute bottom-0 ml-28">
           <p>
             <input
               id="file"
@@ -70,7 +70,7 @@
           </td>
         </tr>
       </table>
-      <div class="flex justify-end mt-5">
+      <div v-if="isUser" class="flex justify-end mt-5">
         <div v-if="!edit">
           <button
             class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
@@ -120,6 +120,10 @@
       profileImg: String,
       userName: String,
       userEmail: String,
+      isUser: {
+        type: Boolean,
+        default: false,
+      },
     },
     setup(props) {
       const store = useStore();

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center bg-sky-300 px-4 headerHeight">
+  <div class="flex justify-center items-center bg-white px-4 headerHeight">
     <div class="flex">
       <p class="font-semibold tracking-wide py-0.5">
         ECA

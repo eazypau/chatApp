@@ -16,12 +16,12 @@
       <div class="flex items-center justify-center my-4">
         <button class="authBtn" type="button">Request New Password</button>
       </div>
-      <div class="flex items-center justify-center pt-4 text-center bg-sky-50">
-        <span class="text-sm text-gray-600">Have an account? </span>
+      <div class="flex items-center justify-center pt-4 text-center bg-gray-700">
+        <span class="text-sm text-white">Have an account? </span>
         <router-link to="/login" class="authRouterLink">Login here</router-link>
       </div>
-      <div class="flex items-center justify-center pb-4 pt-2 text-center bg-sky-50">
-        <span class="text-sm text-gray-600">Don't have an account? </span>
+      <div class="flex items-center justify-center pb-4 pt-2 text-center bg-gray-700">
+        <span class="text-sm text-white">Don't have an account? </span>
         <router-link to="/register" class="authRouterLink">Register here</router-link>
       </div>
     </div>

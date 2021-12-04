@@ -27,6 +27,7 @@ interface ChatState {
   currentChatContent: currentChatObj[];
   currentChatInfo: any;
   currentChatId: string;
+  otherUser: any;
 }
 
 export const useStore = defineStore("store", {
@@ -38,6 +39,7 @@ export const useStore = defineStore("store", {
     currentChatContent: [],
     currentChatInfo: {},
     currentChatId: "",
+    otherUser: {} as userObj,
   }),
   getters: {
     getProfile(state) {
@@ -54,6 +56,9 @@ export const useStore = defineStore("store", {
     },
     getCurrentChatId(state) {
       return state.currentChatId;
+    },
+    getOtherUser(state) {
+      return state.otherUser;
     },
   },
   actions: {
@@ -110,7 +115,7 @@ export const useStore = defineStore("store", {
             });
           }
         );
-      } catch (error:any) {
+      } catch (error: any) {
         alert(error.message);
       }
     },
@@ -130,7 +135,7 @@ export const useStore = defineStore("store", {
       }
       if (duplicate.length > 0) {
         alert("contact already exist!");
-        return
+        return;
       }
       const q: any = query(userProfileCollection, where("email", "==", email));
       // if exist add
@@ -184,17 +189,21 @@ export const useStore = defineStore("store", {
     //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
     //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async fetchChatList() {
+      // todo: need to resolve bug -> after login there is duplicate chat model
       this.chatList = [];
       if (this.profile.chatGroupIds.length) {
         // const chatCollection = collection(db, "chats")
         try {
+          let fetchedChats = [];
           for (let i = 0; i < this.profile.chatGroupIds.length; i++) {
             const chatId = this.profile.chatGroupIds[i];
             const fetchChat: any = await getDoc(doc(chatCollection, chatId));
             if (fetchChat.exists) {
-              this.chatList.push(fetchChat.data());
+              // this.chatList.push(fetchChat.data());
+              fetchedChats.push(fetchChat.data());
             }
           }
+          this.chatList = [...new Set(fetchedChats)];
           // console.log(this.chatList);
         } catch (error) {
           console.log(error);
@@ -202,15 +211,10 @@ export const useStore = defineStore("store", {
       }
     },
     async fetchCurrentChat(chatId: string) {
-      // this.currentChatContent = [];
       const findCurrentChatContent = query(
         collection(chatCollection, chatId, "messages"),
         orderBy("sentAt")
       );
-      // const fetchChatMessages = await getDocs(findCurrentChatContent);
-      // fetchChatMessages.forEach((doc) => {
-      //   this.currentChatContent.push(doc.data());
-      // });
       const unsubscribe = onSnapshot(findCurrentChatContent, (querySnapshot: any) => {
         this.currentChatContent = [];
         querySnapshot.forEach((doc: any) => {
@@ -287,9 +291,11 @@ export const useStore = defineStore("store", {
       }
     },
     async fetchOtherUserDetails(id: string) {
+      this.otherUser = {};
       const fetchOtherUser = await getDoc(doc(userProfileCollection, id));
       if (fetchOtherUser.exists()) {
-        return fetchOtherUser.data();
+        this.otherUser = fetchOtherUser.data();
+        return fetchOtherUser.data()
       }
       console.log("user does not exist");
     },

@@ -2,7 +2,7 @@
   <div
     :class="[message.sendBy !== profile.id ? 'justify-start' : 'justify-end', 'w-full mb-2 flex']"
   >
-    <div class="rounded-md bg-gray-200 px-5 py-2 w-max">
+    <div class="rounded-md bg-secondary-light px-5 py-2 w-max">
       <!-- chat ballon -->
       <p>
         {{ message.text }}

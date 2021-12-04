@@ -3,7 +3,7 @@
     <Menu as="div" class="relative inline-block text-left">
       <div>
         <MenuButton>
-          <i class="bi bi-three-dots-vertical text-xl"></i>
+          <i class="bi bi-three-dots-vertical text-xl text-white"></i>
         </MenuButton>
       </div>
       <transition
@@ -19,7 +19,7 @@
             <MenuItem v-slot="{ active }">
               <button
                 :class="[
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900',
+                  active ? 'bg-secondary-light text-black' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
                 @click="$emit('openAddContactWindow')"
@@ -31,7 +31,7 @@
             <MenuItem v-slot="{ active }">
               <button
                 :class="[
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900',
+                  active ? 'bg-secondary-light text-black' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
                 @click="$emit('openContactWindow')"
@@ -43,7 +43,7 @@
             <MenuItem v-slot="{ active }">
               <button
                 :class="[
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900',
+                  active ? 'bg-secondary-light text-black' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 py-2 text-sm',
                 ]"
                 @click="$emit('openProfile')"
@@ -55,7 +55,7 @@
             <MenuItem v-slot="{ active }">
               <button
                 :class="[
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900',
+                  active ? 'bg-secondary-light text-black' : 'text-gray-900',
                   'group flex rounded-md items-center w-full px-2 pt-1 pb-2 text-sm',
                 ]"
                 @click="logOut"

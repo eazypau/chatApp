@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center py-2 px-4 border-b border-gray-300 hover:cursor-pointer"
+    class="flex items-center mx-2 py-2 px-2 border-b border-secondary-light hover:cursor-pointer"
     @click="viewChat"
   >
     <img
@@ -12,8 +12,8 @@
       "
     />
     <div class="pl-3">
-      <p class="text-sm">{{ name }}</p>
-      <p class="text-xs">{{ item.recentMessage.messageText }}</p>
+      <p class="text-sm text-white font-medium">{{ name }}</p>
+      <p class="text-xs text-white">{{ item.recentMessage.messageText }}</p>
     </div>
   </div>
 </template>
@@ -34,7 +34,13 @@
       const photo = ref("");
       const viewChat = () => {
         // console.log("view chat");
-        emit("passId", props.item.id, name.value, photo.value);
+        const chatDoc = {
+          id: props.item.id,
+          name: name.value,
+          photo: photo.value,
+          members: props.item.members
+        }
+        emit("passId", chatDoc);
       };
       const getName = async () => {
         const findUserId = props.item.members.filter((item: string) => {

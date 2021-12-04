@@ -42,8 +42,8 @@
           </div>
         </form>
       </div>
-      <div class="flex items-center justify-center py-4 text-center bg-sky-50">
-        <span class="text-sm text-gray-600">Have an account? </span>
+      <div class="flex items-center justify-center py-4 text-center bg-gray-700">
+        <span class="text-sm text-white">Have an account? </span>
         <router-link to="/login" class="authRouterLink">Login here</router-link>
       </div>
     </div>

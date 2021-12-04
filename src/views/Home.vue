@@ -20,12 +20,13 @@
           :profile-img="profilePic"
           :user-email="profileDoc.email"
           :user-name="profileDoc.name"
+          :is-user="profileDoc.id !== ''"
           class="w-full"
           @close-profile="showProfile = false"
         />
         <div
           v-if="!showProfile"
-          class="flex items-center justify-between navigationHeight py-2 px-4 bg-gray-300"
+          class="flex items-center justify-between navigationHeight py-2 px-4 bg-dark-blue"
         >
           <!-- left header -->
           <img
@@ -39,7 +40,7 @@
             @open-profile="showProfile = true"
           />
         </div>
-        <div v-if="!showProfile" class="bg-gray-100 flex-1">
+        <div v-if="!showProfile" class="bg-secondary-dark flex-1">
           <!-- body -->
           <ChatContact
             v-for="(chatName, index) in chatList"
@@ -49,11 +50,11 @@
           />
         </div>
       </div>
-      <div class="w-px bg-black"></div>
+      <div class="w-px bg-secondary-dark"></div>
       <div class="w-9/12 flex">
         <!-- right panel -->
         <div class="flex flex-col h-full flex-1">
-          <div class="navigationHeight flex items-center justify-between py-2 px-4 bg-gray-300">
+          <div class="navigationHeight flex items-center justify-between py-2 px-4 bg-dark-blue">
             <!-- right header -->
             <div class="flex items-center">
               <img
@@ -65,7 +66,7 @@
                     : currentPhoto
                 "
               />
-              <p class="px-3">{{ currentChatName }}</p>
+              <p class="px-3 text-white font-medium">{{ currentChatName }}</p>
             </div>
             <ChatDropDown
               v-if="currentChatName !== ''"
@@ -73,16 +74,16 @@
               @delete-chat="deleteChatHistory"
             />
           </div>
-          <div class="bg-gray-100 flex-1 flex flex-col justify-between">
+          <div class="bg-light flex-1 flex flex-col justify-between">
             <!-- body -->
-            <div id="container" class="px-4 pt-2 bodyHeight overflow-y-scroll">
+            <div id="container" :class="[store.currentChatContent.length === 0 ? '':'overflow-y-scroll','px-4 pt-2 bodyHeight']">
               <!-- messages -->
               <ChatBallon v-for="(item, index) in listOfChatContent" :key="index" :message="item" />
               <span id="dummy"></span>
             </div>
             <div
               v-if="currentChatName !== ''"
-              class="w-full inputBarHeight flex items-center justify-between py-3 px-5 bg-gray-300"
+              class="w-full inputBarHeight flex items-center justify-between py-3 px-5 bg-dark-blue"
             >
               <input
                 id="newMsg"
@@ -101,6 +102,9 @@
         <Profile
           v-if="showOtherProfile"
           class="absolute inset-0 w-4/12"
+          :profile-img="otherUserProfilePic"
+          :user-email="otherUserProfile.email"
+          :user-name="otherUserProfile.name"
           @close-profile="showOtherProfile = false"
         />
       </div>
@@ -129,7 +133,6 @@
   const router = useRouter();
   const store = useStore();
   const { slideDown } = useDOM();
-  // const { chatContent } = useDummy();
   onAuthStateChanged(auth, async (user: any) => {
     if (user) {
       // console.log(user);
@@ -141,10 +144,6 @@
       router.push("/login");
     }
   });
-  // await store.fetchUserProfile();
-  // await store.fetchContactList();
-  // await store.fetchChatList();
-
   const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
     if (store.getChatContent === []) {
@@ -165,13 +164,20 @@
     }
     return store.getContactList;
   });
+  const otherUserProfile = computed(() => store.getOtherUser);
+  const otherUserProfilePic = computed(() => {
+    if (store.getOtherUser.photo === "") {
+      return "https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg";
+    }
+    return store.getProfile.photo;
+  });
 
   watch(
     () => listOfChatContent.value,
     (prev, next) => {
-      slideDown("dummy");
-      // const container = document.getElementById("dummy");
-      // container.scrollTo = container.scrollHeight;
+      // slideDown("dummy");
+      // const div: any = document.getElementById("container");
+      // div.scrollTop = div.scrollHeight;
     },
     { deep: true }
   );
@@ -199,15 +205,23 @@
     // TODO: need to be able to check whether chat exist
   };
   //TODO: need to implement autoScroll to bottom when view chat
-  const viewChat = async (chatId: string, chatName: string, chatPhoto: string) => {
-    const container: any = document.getElementById("dummy");
+  //* maybe can try this https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
+  const viewChat = async (chatDoc: any) => {
+    const container: HTMLDivElement | any = document.getElementById("container");
     // currentChatId.value = chatId;
-    store.currentChatId = chatId;
-    currentChatName.value = chatName;
-    currentPhoto.value = chatPhoto;
-    await store.fetchCurrentChat(chatId);
+    store.currentChatId = chatDoc.id;
+    currentChatName.value = chatDoc.name;
+    currentPhoto.value = chatDoc.photo;
+    const filteredId = chatDoc.members.filter((item: any) => {
+      return item !== profileDoc.value.id
+    })
+    console.log(filteredId);
+    // store.fetchCurrentChat(chatId).then(() => (container.scrollTop = container.scrollHeight));
+    await store.fetchCurrentChat(chatDoc.id);
+    await store.fetchOtherUserDetails(filteredId[0])
     // container.scrollIntoView({ behavior: "smooth" });
-    container.scrollTo = container.scrollHeight;
+    container.scrollTop = container.scrollHeight;
+    console.log(container.scrollTop);
   };
   const deleteChatHistory = () => {
     console.log("delete chat history...");
@@ -225,7 +239,7 @@
     // const container = document.getElementById("container");
     // container.scrollIntoView({ behavior: "smooth" });
     // container.scrollTop = container.scrollHeight;
-    const container: any = document.getElementById("dummy");
+    const container: HTMLElement | any = document.getElementById("dummy");
     container.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -236,13 +250,13 @@
   //// implement firebase into the project
   //// implement firebase auth (createUser, login, logout and send new password)
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
-  // todo: create view other user profile
+  //// create view other user profile
   // TODO: implement firebase storage (save/read/delete profile image)
   // TODO: implement jest for testing
   //// add meta tags for SEO purposes
   // TODO: update favicon and add a loading component
   // TODO: touch up on the colors
-  // TODO: resolve all ts errors and eslint erros...
+  //// resolve all ts errors and eslint erros...
   // TODO: update README.md
   // TODO: need to comment out some of console log and change some to alert (maybe can consider using sweet alert/the NotificationModal)
   // dynamic routing?
@@ -267,4 +281,5 @@
   .addContactAnimate-leave-to {
     opacity: 0;
   }
+
 </style>

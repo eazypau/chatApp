@@ -28,8 +28,8 @@
           </div>
         </form>
       </div>
-      <div class="flex items-center justify-center py-4 text-center bg-sky-50">
-        <span class="text-sm text-gray-600">Don't have an account? </span>
+      <div class="flex items-center justify-center py-4 text-center bg-gray-700">
+        <span class="text-sm text-white">Don't have an account? </span>
         <router-link to="/register" class="authRouterLink">Register</router-link>
       </div>
     </div>
