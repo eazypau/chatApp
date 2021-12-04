@@ -18,6 +18,7 @@
             :value="password"
             @update:model-value="password = $event"
             @keydown.enter="login"
+            class="mt-3"
           />
           <div class="flex items-center justify-between mt-4">
             <router-link to="/forgot-password" class="text-sm text-gray-600 hover:text-gray-500"

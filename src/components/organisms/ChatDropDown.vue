@@ -46,6 +46,12 @@
     </Menu>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts">
+  import { defineComponent } from "vue";
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+
+  export default defineComponent({
+    name: "ChatDropDown",
+    components: { Menu, MenuButton, MenuItems, MenuItem },
+  });
 </script>

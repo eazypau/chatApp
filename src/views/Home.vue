@@ -42,8 +42,8 @@
         <div v-if="!showProfile" class="bg-gray-100 flex-1">
           <!-- body -->
           <ChatContact
-            v-for="chatName in chatList"
-            :key="chatName.chatId"
+            v-for="(chatName, index) in chatList"
+            :key="index"
             :item="chatName"
             @passId="viewChat"
           />
@@ -77,7 +77,7 @@
             <!-- body -->
             <div id="container" class="px-4 pt-2 bodyHeight overflow-y-scroll">
               <!-- messages -->
-              <ChatBallon v-for="item in listOfChatContent" :key="item" :message="item" />
+              <ChatBallon v-for="(item, index) in listOfChatContent" :key="index" :message="item" />
               <span id="dummy"></span>
             </div>
             <div
@@ -202,7 +202,7 @@
   };
   //TODO: need to implement autoScroll to bottom when view chat
   const viewChat = async (chatId: string, chatName: string, chatPhoto: string) => {
-    const container = document.getElementById("dummy");
+    const container: any = document.getElementById("dummy");
     // currentChatId.value = chatId;
     store.currentChatId = chatId;
     currentChatName.value = chatName;
@@ -227,11 +227,11 @@
     // const container = document.getElementById("container");
     // container.scrollIntoView({ behavior: "smooth" });
     // container.scrollTop = container.scrollHeight;
-    const container = document.getElementById("dummy");
+    const container: any = document.getElementById("dummy");
     container.scrollIntoView({ behavior: "smooth" });
   };
 
-  //! target to get everything done by 7th Nov
+  //! target to get everything done by 4th Dec
   //// create chat ballons, chat pills, modal and dropdown components
   //// create the chat window at home page
   //// use which version of firebase? v8 or v9?
@@ -239,9 +239,11 @@
   // TODO: implement firebase auth (createUser, login, logout and send new password)
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
   // TODO: implement firebase storage (save/read/delete profile image)
-  // TODO: add meta tags for SEO purposes
+  //// add meta tags for SEO purposes
+  // TODO: update favicon and add a loading component
   // TODO: touch up on the colors
-  // set favicon
+  // TODO: resolve all ts errors...
+  // TODO: update README.md
   // dynamic routing
   // error page
 </script>

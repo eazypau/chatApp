@@ -34,18 +34,25 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts">
+  import { defineComponent } from "vue";
   import { ref } from "@vue/reactivity";
   import { useStore } from "../../store/store";
 
-  let userEmail = ref("");
-  const store = useStore();
+  export default defineComponent({
+    name: "AddContact",
+    setup() {
+      let userEmail = ref("");
+      const store = useStore();
 
-  const addContacts = async () => {
-    if (userEmail.value === "") {
-      return;
-    }
-    await store.addUserContact(userEmail.value);
-    userEmail.value = "";
-  };
+      const addContacts = async () => {
+        if (userEmail.value === "") {
+          return;
+        }
+        await store.addUserContact(userEmail.value);
+        userEmail.value = "";
+      };
+      return { userEmail, store, addContacts };
+    },
+  });
 </script>

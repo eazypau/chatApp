@@ -70,14 +70,23 @@
     </Menu>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts">
+  import { defineComponent } from "vue";
   import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
   import { logOutUser } from "../../firebase/auth";
   import { useStore } from "../../store/store";
-  const store = useStore();
-  const logOut = () => {
-    console.log("log out...");
-    logOutUser();
-    store.$reset();
-  };
+
+  export default defineComponent({
+    name: "DropDown",
+    components: { Menu, MenuButton, MenuItems, MenuItem },
+    setup() {
+      const store = useStore();
+      const logOut = () => {
+        console.log("log out...");
+        logOutUser();
+        store.$reset();
+      };
+      return { store, logOut };
+    },
+  });
 </script>

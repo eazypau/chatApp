@@ -16,7 +16,7 @@
             @update:model-value="name = $event"
           />
           <TextInput
-          class="mt-2"
+            class="mt-3"
             name="Email"
             inputName="email"
             :value="email"
@@ -27,6 +27,7 @@
             inputName="pasword"
             :value="password"
             @update:model-value="password = $event"
+            class="mt-3"
           />
           <PwInput
             name="ConfirmPassword"
@@ -34,6 +35,7 @@
             :value="confirmPassword"
             @update:model-value="confirmPassword = $event"
             @keydown.enter="createUser"
+            class="mt-3"
           />
           <div class="flex items-center justify-center mt-4">
             <button class="authBtn" type="button" @click="createUser">Register</button>
@@ -48,55 +50,55 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ref } from '@vue/reactivity';
-  import TextInput from '../components/molecules/TextInput.vue';
-  import PwInput from '../components/molecules/PwInput.vue';
-  import { createUserAcc } from '../firebase/auth';
-  import Notification from '../components/molecules/Notification.vue';
+  import { ref } from "@vue/reactivity";
+  import TextInput from "../components/molecules/TextInput.vue";
+  import PwInput from "../components/molecules/PwInput.vue";
+  import { createUserAcc } from "../firebase/auth";
+  import Notification from "../components/molecules/Notification.vue";
 
-  let name = ref('');
-  let email = ref('');
-  let password = ref('');
-  let confirmPassword = ref('');
-  let popUpMsg = ref('');
+  let name = ref("");
+  let email = ref("");
+  let password = ref("");
+  let confirmPassword = ref("");
+  let popUpMsg = ref("");
   let showMsg = ref(false);
   const createUser = async () => {
     // console.log('create');
     if (
-      name.value === '' ||
-      email.value === '' ||
-      password.value === '' ||
-      confirmPassword.value === ''
+      name.value === "" ||
+      email.value === "" ||
+      password.value === "" ||
+      confirmPassword.value === ""
     ) {
-      popUpMsg.value = 'Please provide the information required.';
+      popUpMsg.value = "Please provide the information required.";
       showMsg.value = true;
       setTimeout(() => (showMsg.value = false), 2000);
       return;
     }
     if (password.value !== confirmPassword.value) {
-      popUpMsg.value = 'Password and confirm password must be same';
+      popUpMsg.value = "Password and confirm password must be same";
       showMsg.value = true;
       setTimeout(() => (showMsg.value = false), 2000);
-      password.value = '';
-      confirmPassword.value = '';
+      password.value = "";
+      confirmPassword.value = "";
       return;
     }
     const userDetails = {
       email: email.value,
       name: name.value,
       password: password.value,
-      chatGroupIds: []
+      chatGroupIds: [],
     };
     createUserAcc(userDetails);
   };
 </script>
 <style>
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.5s ease;
-}
-.modal-enter-from,
-.modal-leave-to {
-  transform: translateY(-100px);
-}
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: all 0.5s ease;
+  }
+  .modal-enter-from,
+  .modal-leave-to {
+    transform: translateY(-100px);
+  }
 </style>
