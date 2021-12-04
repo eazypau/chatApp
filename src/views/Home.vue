@@ -76,7 +76,13 @@
           </div>
           <div class="bg-light flex-1 flex flex-col justify-between">
             <!-- body -->
-            <div id="container" :class="[store.currentChatContent.length === 0 ? '':'overflow-y-scroll','px-4 pt-2 bodyHeight']">
+            <div
+              id="container"
+              :class="[
+                store.currentChatContent.length === 0 ? '' : 'overflow-y-scroll',
+                'px-4 pt-2 bodyHeight',
+              ]"
+            >
               <!-- messages -->
               <ChatBallon v-for="(item, index) in listOfChatContent" :key="index" :message="item" />
               <span id="dummy"></span>
@@ -213,12 +219,12 @@
     currentChatName.value = chatDoc.name;
     currentPhoto.value = chatDoc.photo;
     const filteredId = chatDoc.members.filter((item: any) => {
-      return item !== profileDoc.value.id
-    })
+      return item !== profileDoc.value.id;
+    });
     console.log(filteredId);
     // store.fetchCurrentChat(chatId).then(() => (container.scrollTop = container.scrollHeight));
     await store.fetchCurrentChat(chatDoc.id);
-    await store.fetchOtherUserDetails(filteredId[0])
+    await store.fetchOtherUserDetails(filteredId[0]);
     // container.scrollIntoView({ behavior: "smooth" });
     container.scrollTop = container.scrollHeight;
     console.log(container.scrollTop);
@@ -255,7 +261,7 @@
   // TODO: implement jest for testing
   //// add meta tags for SEO purposes
   // TODO: update favicon and add a loading component
-  // TODO: touch up on the colors
+  //// touch up on the colors
   //// resolve all ts errors and eslint erros...
   // TODO: update README.md
   // TODO: need to comment out some of console log and change some to alert (maybe can consider using sweet alert/the NotificationModal)
@@ -281,5 +287,4 @@
   .addContactAnimate-leave-to {
     opacity: 0;
   }
-
 </style>
