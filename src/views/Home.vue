@@ -238,6 +238,7 @@
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
   // todo: create view other user profile
   // TODO: implement firebase storage (save/read/delete profile image)
+  // TODO: implement jest for testing
   //// add meta tags for SEO purposes
   // TODO: update favicon and add a loading component
   // TODO: touch up on the colors
