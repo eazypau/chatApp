@@ -5,7 +5,7 @@ import {
   signOut,
   updateEmail,
 } from "@firebase/auth";
-import { Profile } from "../classes/constructor";
+// import { Profile } from "../classes/constructor";
 import router from "../router";
 import { auth } from "./firebase";
 import { createUserProfile } from "./profile";
@@ -68,7 +68,8 @@ const sendNewPassWord = (email: string) => {
 };
 
 const updateUserAccEmail = (email: string) => {
-  updateEmail(auth.currentUser, email)
+  const user: any = auth.currentUser
+  updateEmail(user, email)
     .then(() => {
       alert("Successfully update email address");
     })

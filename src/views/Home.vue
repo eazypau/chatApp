@@ -4,24 +4,24 @@
     <div class="flex viewHeight">
       <transition name="addContactAnimate">
         <ContactList
+          v-if="showContact"
           :contacts="contactList"
           @close-contact="showContact = false"
-          @createChat="createChatWindow"
-          v-if="showContact"
+          @create-chat="createChatWindow"
         />
       </transition>
       <transition name="addContactAnimate">
-        <AddContact @close-contact="showAddContact = false" v-if="showAddContact" />
+        <AddContact v-if="showAddContact" @close-contact="showAddContact = false" />
       </transition>
       <div class="w-3/12 flex flex-col">
         <!-- left panel -->
         <Profile
           v-if="showProfile"
-          @closeProfile="showProfile = false"
+          :profile-img="profilePic"
+          :user-email="profileDoc.email"
+          :user-name="profileDoc.name"
           class="w-full"
-          :profileImg="profilePic"
-          :userEmail="profileDoc.email"
-          :userName="profileDoc.name"
+          @close-profile="showProfile = false"
         />
         <div
           v-if="!showProfile"
@@ -45,7 +45,7 @@
             v-for="(chatName, index) in chatList"
             :key="index"
             :item="chatName"
-            @passId="viewChat"
+            @pass-id="viewChat"
           />
         </div>
       </div>
@@ -85,10 +85,10 @@
               class="w-full inputBarHeight flex items-center justify-between py-3 px-5 bg-gray-300"
             >
               <input
-                type="text"
-                name="newMsg"
                 id="newMsg"
                 v-model="newMessage"
+                type="text"
+                name="newMsg"
                 class="rounded-full flex-1 h-8 px-4"
                 @keydown.enter="sendMessage"
               />
@@ -100,8 +100,8 @@
         </div>
         <Profile
           v-if="showOtherProfile"
-          @closeProfile="showOtherProfile = false"
           class="absolute inset-0 w-4/12"
+          @close-profile="showOtherProfile = false"
         />
       </div>
     </div>
@@ -177,7 +177,6 @@
   );
 
   let currentChatName = ref("");
-  // let currentChatId = ref("");
   const currentChatId = computed(() => store.getCurrentChatId);
   let currentPhoto = ref("");
   let newMessage = ref("");
@@ -185,7 +184,6 @@
   let showOtherProfile = ref(false);
   let showContact = ref(false);
   let showAddContact = ref(false);
-  // let currentUserName = ref("");
 
   const createChatWindow = (contactDoc: contactsObj) => {
     const chatDocInfo = {
@@ -221,7 +219,7 @@
       profileDoc.value.id,
       currentChatId.value
     );
-    console.log(newMessageContent);
+    // console.log(newMessageContent);
     await store.sendMessage(newMessageContent);
     newMessage.value = "";
     // const container = document.getElementById("container");
@@ -236,15 +234,17 @@
   //// create the chat window at home page
   //// use which version of firebase? v8 or v9?
   //// implement firebase into the project
-  // TODO: implement firebase auth (createUser, login, logout and send new password)
+  //// implement firebase auth (createUser, login, logout and send new password)
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
+  // todo: create view other user profile
   // TODO: implement firebase storage (save/read/delete profile image)
   //// add meta tags for SEO purposes
   // TODO: update favicon and add a loading component
   // TODO: touch up on the colors
-  // TODO: resolve all ts errors...
+  // TODO: resolve all ts errors and eslint erros...
   // TODO: update README.md
-  // dynamic routing
+  // TODO: need to comment out some of console log and change some to alert (maybe can consider using sweet alert/the NotificationModal)
+  // dynamic routing?
   // error page
 </script>
 <style>

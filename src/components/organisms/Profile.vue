@@ -1,6 +1,6 @@
 <template>
   <div class="mx-auto relative minHeight z-20">
-    <button @click="$emit('closeProfile')" type="button" class="absolute top-0 left-0 pt-2 pl-3">
+    <button class="absolute top-0 left-0 pt-2 pl-3" type="button" @click="$emit('closeProfile')">
       <i
         class="bi bi-arrow-left text-xl xl:text-2xl 2xl:text-3xl text-gray-600 hover:text-gray-300"
       ></i>
@@ -13,19 +13,28 @@
         <div class="absolute bottom-0 ml-28">
           <p>
             <input
+              id="file"
               class="hidden"
               type="file"
               accept="image/*"
               name="image"
-              id="file"
               @change="updateProfilePic($event)"
             />
           </p>
-          <p class="h-8 w-8 rounded-full bg-sky-400 flex justify-center items-center hover:text-white cursor-pointer">
-            <label
-              for="file"
-              style="cursor: pointer"
-            >
+          <p
+            class="
+              h-8
+              w-8
+              rounded-full
+              bg-sky-400
+              flex
+              justify-center
+              items-center
+              hover:text-white
+              cursor-pointer
+            "
+          >
+            <label for="file" style="cursor: pointer">
               <i class="bi bi-upload"></i>
             </label>
           </p>
@@ -39,7 +48,7 @@
             <div v-else>
               <TextInput
                 name="name"
-                inputName="name"
+                input-name="name"
                 :value="name"
                 @update:model-value="name = $event"
               />
@@ -53,7 +62,7 @@
             <div v-else>
               <TextInput
                 name="email"
-                inputName="email"
+                input-name="email"
                 :value="email"
                 @update:model-value="email = $event"
               />
@@ -64,9 +73,9 @@
       <div class="flex justify-end mt-5">
         <div v-if="!edit">
           <button
+            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
             type="button"
             @click="edit = true"
-            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
           >
             <i class="bi bi-pencil-square text-xl mr-1"></i>
             Edit
@@ -78,17 +87,17 @@
         </div>
         <div v-else>
           <button
+            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
             type="button"
             @click="updateProfile"
-            class="rounded px-3 py-0.5 bg-sky-400 hover:text-white mr-2"
           >
             <i class="bi bi-check2-square text-xl mr-1"></i>
             Update
           </button>
           <button
+            class="rounded px-3 py-0.5 bg-red-400 hover:text-white"
             type="button"
             @click="cancelEdit"
-            class="rounded px-3 py-0.5 bg-red-400 hover:text-white"
           >
             <i class="bi bi-x text-xl"></i>
             Cancel
@@ -99,12 +108,14 @@
   </div>
 </template>
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import { ref } from '@vue/reactivity';
-  import TextInput from '../molecules/TextInput.vue';
-  import { useStore } from '../../store/store';
+  import { defineComponent } from "vue";
+  import { ref } from "@vue/reactivity";
+  import TextInput from "../molecules/TextInput.vue";
+  import { useStore } from "../../store/store";
 
   export default defineComponent({
+    name: "ProfileWindow",
+    components: { TextInput },
     props: {
       profileImg: String,
       userName: String,
@@ -123,7 +134,7 @@
       };
 
       const updateProfile = async () => {
-        const newProfileInfo:any = {
+        const newProfileInfo: any = {
           name: name.value,
           email: email.value,
         };
@@ -136,7 +147,6 @@
       };
       return { edit, name, email, cancelEdit, updateProfile, updateProfilePic };
     },
-    components: { TextInput },
   });
 </script>
 <style>

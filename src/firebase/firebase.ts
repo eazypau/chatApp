@@ -3,7 +3,7 @@ import { getFirestore, collection } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth, onAuthStateChanged, Unsubscribe } from "firebase/auth";
 
-const firebaseConfig = {
+const firebaseConfig: any = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN + '.firebaseapp.com',
   databaseURL: import.meta.env.VITE_FIREBASE_DATABASE + '.firebasedatabase.app',

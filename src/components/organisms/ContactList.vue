@@ -42,6 +42,7 @@
   import { defineComponent } from "vue";
 
   export default defineComponent({
+    // todo: might need use validator
     props: ["contacts"],
     setup() {},
   });

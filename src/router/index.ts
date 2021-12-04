@@ -43,7 +43,7 @@ router.beforeEach(async (to, from, next) => {
   // const user = auth.currentUser;
   const authStatus = await getCurrentUser();
   if (to.matched.some((route) => route.meta.requiresAuth)) {
-    console.log(authStatus);
+    // console.log(authStatus);
     if (authStatus) {
       next();
     } else {

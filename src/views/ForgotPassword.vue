@@ -35,7 +35,7 @@
   let email = ref('');
 
   const getNewPassword = () => {
-    console.log('getting new password...');
+    // console.log('getting new password...');
     sendNewPassWord(email.value);
   };
 </script>

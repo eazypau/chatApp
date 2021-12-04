@@ -25,6 +25,7 @@
       },
       value: {
         type: String,
+        default: "",
         required: true,
       },
     },

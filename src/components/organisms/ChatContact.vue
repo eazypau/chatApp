@@ -1,7 +1,7 @@
 <template>
   <div
-    @click="viewChat"
     class="flex items-center py-2 px-4 border-b border-gray-300 hover:cursor-pointer"
+    @click="viewChat"
   >
     <img
       class="w-10 h-10 rounded-full"
@@ -22,13 +22,18 @@
   import { useStore } from "../../store/store";
 
   export default defineComponent({
-    props: ["item"],
+    props: {
+      item: {
+        type: Object,
+        default: () => {},
+      },
+    },
     setup(props, { emit }) {
       const store = useStore();
       const name = ref("");
       const photo = ref("");
       const viewChat = () => {
-        console.log("view chat");
+        // console.log("view chat");
         emit("passId", props.item.id, name.value, photo.value);
       };
       const getName = async () => {

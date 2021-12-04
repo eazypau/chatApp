@@ -8,11 +8,11 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   export default defineComponent({
+    name: "NotificationModal",
     props: {
       errorMsg: {
         type: String,
       },
     },
-    setup() {},
   });
 </script>

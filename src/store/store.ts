@@ -291,7 +291,7 @@ export const useStore = defineStore("store", {
       if (fetchOtherUser.exists()) {
         return fetchOtherUser.data();
       }
-      console.log("user does not existi");
+      console.log("user does not exist");
     },
     //TODO: need to use onSnapShot to listen to changes in firestore collection
     //* ref: https://firebase.google.com/docs/firestore/query-data/listen#listen_to_multiple_documents_in_a_collection

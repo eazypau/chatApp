@@ -82,7 +82,7 @@
     setup() {
       const store = useStore();
       const logOut = () => {
-        console.log("log out...");
+        // console.log("log out...");
         logOutUser();
         store.$reset();
       };
