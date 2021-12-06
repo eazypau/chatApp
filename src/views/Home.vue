@@ -180,10 +180,12 @@
 
   watch(
     () => listOfChatContent.value,
-    (prev, next) => {
-      // slideDown("dummy");
-      // const div: any = document.getElementById("container");
-      // div.scrollTop = div.scrollHeight;
+    () => {
+      setTimeout(() => {
+        const div: any = document.getElementById("dummy");
+        // div.scrollTop = div.scrollHeight;
+        div.scrollIntoView({ behavior: "smooth" });
+      }, 500);
     },
     { deep: true }
   );
@@ -258,14 +260,13 @@
   // TODO: implement firebase store (create/delete profile, save/read/delete contact, save/read/delete chat history)
   //// create view other user profile
   // TODO: implement firebase storage (save/read/delete profile image)
-  // TODO: implement jest for testing
+  // TODO: implement jest for testing?
   //// add meta tags for SEO purposes
   // TODO: update favicon and add a loading component
-  //// touch up on the colors
+  // TODO: touch up on the colors
   //// resolve all ts errors and eslint erros...
   // TODO: update README.md
   // TODO: need to comment out some of console log and change some to alert (maybe can consider using sweet alert/the NotificationModal)
-  // dynamic routing?
   // error page
 </script>
 <style>

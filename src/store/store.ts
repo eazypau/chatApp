@@ -189,22 +189,30 @@ export const useStore = defineStore("store", {
     //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
     //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async fetchChatList() {
-      // todo: need to resolve bug -> after login there is duplicate chat model
-      this.chatList = [];
+      ////  need to resolve bug -> after login there is duplicate chat model
+      // todo: need to use onSnapShot
+      // this.chatList = [];
       if (this.profile.chatGroupIds.length) {
         // const chatCollection = collection(db, "chats")
         try {
-          let fetchedChats = [];
-          for (let i = 0; i < this.profile.chatGroupIds.length; i++) {
-            const chatId = this.profile.chatGroupIds[i];
-            const fetchChat: any = await getDoc(doc(chatCollection, chatId));
-            if (fetchChat.exists) {
-              // this.chatList.push(fetchChat.data());
-              fetchedChats.push(fetchChat.data());
+          const unsub = onSnapshot(chatCollection, (snapShot: any) => {
+            let fetchedChat: any[] = [];
+            this.chatList = [];
+            snapShot.forEach((doc: any) => {
+              fetchedChat.push(doc.data());
+            });
+            for (let i = 0; i < this.profile.chatGroupIds.length; i++) {
+              const chatId = this.profile.chatGroupIds[i];
+              for (let j = 0; j < fetchedChat.length; j++) {
+                const fetchedChatId = fetchedChat[j].id;
+                if (fetchedChatId === chatId) {
+                  this.chatList.push(fetchedChat[j]);
+                  break;
+                }
+              }
             }
-          }
-          this.chatList = [...new Set(fetchedChats)];
-          // console.log(this.chatList);
+            // console.log(this.chatList);
+          });
         } catch (error) {
           console.log(error);
         }
@@ -295,7 +303,7 @@ export const useStore = defineStore("store", {
       const fetchOtherUser = await getDoc(doc(userProfileCollection, id));
       if (fetchOtherUser.exists()) {
         this.otherUser = fetchOtherUser.data();
-        return fetchOtherUser.data()
+        return fetchOtherUser.data();
       }
       console.log("user does not exist");
     },
