@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto relative minHeight z-20">
+  <div class="mx-auto relative minHeight z-20 border-t border-secondary-dark">
     <button class="absolute top-0 left-0 pt-2 pl-3" type="button" @click="$emit('closeProfile')">
       <i
         class="bi bi-arrow-left text-xl xl:text-2xl 2xl:text-3xl text-gray-600 hover:text-gray-300"
@@ -155,6 +155,6 @@
 </script>
 <style>
   .minHeight {
-    min-height: 93vh;
+    min-height: 97vh;
   }
 </style>

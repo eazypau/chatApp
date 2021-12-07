@@ -5,10 +5,13 @@ import {
   signOut,
   updateEmail,
 } from "@firebase/auth";
+import useNotification from "../composable/useNotification";
 // import { Profile } from "../classes/constructor";
 import router from "../router";
 import { auth } from "./firebase";
 import { createUserProfile } from "./profile";
+
+const { triggerMessage } = useNotification();
 
 const signInExistingUser = (email: string, password: string) => {
   signInWithEmailAndPassword(auth, email, password)
@@ -19,7 +22,7 @@ const signInExistingUser = (email: string, password: string) => {
       router.push({ name: "Home" });
     })
     .catch((err) => {
-      console.log(err.message);
+      triggerMessage(err.message);
     });
 };
 
@@ -30,7 +33,7 @@ const logOutUser = () => {
       return router.push({ name: "Login" });
     })
     .catch((err) => {
-      console.log(err.message);
+      triggerMessage(err.message);
     });
 };
 
@@ -38,43 +41,43 @@ const createUserAcc = (userDetails: { email: string; password: string; name: str
   createUserWithEmailAndPassword(auth, userDetails.email, userDetails.password)
     .then(async (userCred) => {
       const user = userCred.user;
-      console.log(user.uid);
+      // console.log(user.uid);
       const userProfile = {
         id: user.uid,
         name: userDetails.name,
         email: userDetails.email,
-        photo: '',
-        chatGroupIds: []
+        photo: "",
+        chatGroupIds: [],
       };
-      localStorage.setItem("firebaseToken", user.uid)
+      localStorage.setItem("firebaseToken", user.uid);
       // store.user = user.uid;
       // const userProfile = new Profile(user.uid, userDetails.name, userDetails.email, "", []);
       await createUserProfile(userProfile);
       router.push({ name: "Home" });
     })
     .catch((err) => {
-      console.log(err.message);
+      triggerMessage(err.message);
     });
 };
 
 const sendNewPassWord = (email: string) => {
   sendPasswordResetEmail(auth, email)
     .then(() => {
-      console.log("Successfully send password");
+      triggerMessage("Successfully send password");
     })
     .catch((err) => {
-      console.log(err.message);
+      triggerMessage(err.message);
     });
 };
 
 const updateUserAccEmail = (email: string) => {
-  const user: any = auth.currentUser
+  const user: any = auth.currentUser;
   updateEmail(user, email)
     .then(() => {
-      alert("Successfully update email address");
+      // triggerMessage("Successfully update email address");
     })
     .catch((err) => {
-      alert(`${err.message}`);
+      triggerMessage(err.message);
     });
 };
 

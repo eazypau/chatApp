@@ -18,6 +18,7 @@ import {
 } from "@firebase/firestore";
 import { chatCollection, db, storage, userProfileCollection } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
+import useNotification from "../composable/useNotification";
 
 interface ChatState {
   user: any;
@@ -29,6 +30,8 @@ interface ChatState {
   currentChatId: string;
   otherUser: any;
 }
+
+const { triggerMessage } = useNotification();
 
 export const useStore = defineStore("store", {
   state: (): ChatState => ({
@@ -71,19 +74,24 @@ export const useStore = defineStore("store", {
           // console.log(docSnap.data());
           this.profile = docSnap.data();
         }
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        triggerMessage(error.message);
       }
     },
     async updateUserProfileInfo(newProfileInfo: { name: string; email: string }) {
       try {
         updateUserName(this.user, newProfileInfo.name);
-        updateUserAccEmail(newProfileInfo.email);
-        updateUserEmail(this.user, newProfileInfo.email);
+        if (newProfileInfo.email !== this.profile.email) {
+          console.log("trigger update email");
+
+          updateUserAccEmail(newProfileInfo.email);
+          updateUserEmail(this.user, newProfileInfo.email);
+          this.profile.email = newProfileInfo.email;
+        }
         this.profile.name = newProfileInfo.name;
-        this.profile.email = newProfileInfo.email;
-      } catch (error) {
-        console.log(error);
+        triggerMessage("Successfully update profile details.");
+      } catch (error: any) {
+        triggerMessage(error.message);
       }
     },
     async uploadProfileImage(file: any) {
@@ -95,34 +103,39 @@ export const useStore = defineStore("store", {
           "state_changed",
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("Upload is " + progress + "% done");
+            // console.log("Upload is " + progress + "% done");
             if (progress === 100) {
               // store.commit('loadingStatus', false);
               // store.commit('changeImgSrc', URL.createObjectURL(file));
-              alert("Upload complete!");
+              triggerMessage("Upload complete!");
             }
           },
           (error) => {
-            console.log("Fail to upload new profle picture...");
-            console.log(error);
-            alert("Failed to update profile picture...");
+            // console.log("Fail to upload new profle picture...");
+            // console.log(error);
+            triggerMessage("Failed to update profile picture...");
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              console.log("File available at", downloadURL);
+              // console.log("File available at", downloadURL);
               this.profile.photo = downloadURL;
               updateUserPhoto(this.user, downloadURL);
+              triggerMessage("Successfully updated profile picture.");
             });
           }
         );
       } catch (error: any) {
-        alert(error.message);
+        triggerMessage(error.message);
       }
     },
     async addUserContact(email: string) {
       // search profile by email
+      if (email === this.profile.email) {
+        triggerMessage("You are not allowed to add yourself.");
+        return;
+      }
       let contacts: any = {};
-      let duplicate = [];
+      let duplicate: any = [];
       const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
       const checkDuplicate = query(userContactCollectionRef, where("email", "==", email));
       const getDuplciate = await getDocs(checkDuplicate);
@@ -134,20 +147,26 @@ export const useStore = defineStore("store", {
         console.log(error);
       }
       if (duplicate.length > 0) {
-        alert("contact already exist!");
+        triggerMessage("Contact already exist!");
         return;
       }
       const q: any = query(userProfileCollection, where("email", "==", email));
+      const isExist: any = [];
       // if exist add
       const findDoc: any = await getDocs(q);
-      // });
+      findDoc.forEach((doc: any) => {
+        isExist.push(doc.data());
+      });
+      if (isExist.length === 0) {
+        triggerMessage("Contact does not exist! Please try again.");
+        return;
+      }
       try {
         findDoc.forEach((doc: any) => {
-          // contacts.push(doc.data());
           contacts = doc.data();
         });
         const addContactDoc = await addDoc(userContactCollectionRef, contacts);
-        console.log(addContactDoc.id);
+        // console.log(addContactDoc.id);
         const updateDocWithId = await updateDoc(
           doc(userProfileCollection, this.user, "contacts", addContactDoc.id),
           {
@@ -158,9 +177,9 @@ export const useStore = defineStore("store", {
         if (!this.contactList) {
           await this.fetchContactList();
         }
-        alert("successfully add contact.");
-      } catch (error) {
-        console.log(error);
+        triggerMessage("Successfully add contact.");
+      } catch (error: any) {
+        triggerMessage(error.message);
       }
     },
     async fetchContactList() {
@@ -168,10 +187,6 @@ export const useStore = defineStore("store", {
       try {
         const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
         const queryDocs = query(userContactCollectionRef);
-        // const querySnapshot = onSnapshot(queryDocs);
-        // querySnapshot.forEach((doc: any) => {
-        //   this.contactList.push(doc.data());
-        // });
         const unsubscribe = onSnapshot(queryDocs, (querySnapshot: any) => {
           this.contactList = [];
           querySnapshot.forEach((doc: any) => {
@@ -180,8 +195,8 @@ export const useStore = defineStore("store", {
           // console.log("Current messages ", this.currentChatContent.join(", "));
         });
         // console.log(this.contactList);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        triggerMessage(error.message);
       }
     },
     //* for creating/saving chat
@@ -189,11 +204,7 @@ export const useStore = defineStore("store", {
     //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
     //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async fetchChatList() {
-      ////  need to resolve bug -> after login there is duplicate chat model
-      // todo: need to use onSnapShot
-      // this.chatList = [];
       if (this.profile.chatGroupIds.length) {
-        // const chatCollection = collection(db, "chats")
         try {
           const unsub = onSnapshot(chatCollection, (snapShot: any) => {
             let fetchedChat: any[] = [];
@@ -213,8 +224,8 @@ export const useStore = defineStore("store", {
             }
             // console.log(this.chatList);
           });
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          triggerMessage(error.message);
         }
       }
     },
@@ -294,8 +305,8 @@ export const useStore = defineStore("store", {
         if (firstTime) {
           await this.fetchCurrentChat(messageContent.chatId);
         }
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        triggerMessage(error.message);
       }
     },
     async fetchOtherUserDetails(id: string) {
@@ -307,8 +318,5 @@ export const useStore = defineStore("store", {
       }
       console.log("user does not exist");
     },
-    //TODO: need to use onSnapShot to listen to changes in firestore collection
-    //* ref: https://firebase.google.com/docs/firestore/query-data/listen#listen_to_multiple_documents_in_a_collection
-    //* ref: https://stackoverflow.com/questions/48606611/firestore-listen-to-update-on-the-entire-collection/48608816
   },
 });

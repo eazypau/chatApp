@@ -1,13 +1,16 @@
-import { doc, setDoc, updateDoc } from '@firebase/firestore';
-import { userObj } from '../classes/type';
-import { userProfileCollection } from './firebase';
+import { doc, setDoc, updateDoc } from "@firebase/firestore";
+import { userObj } from "../classes/type";
+import useNotification from "../composable/useNotification";
+import { userProfileCollection } from "./firebase";
+
+const { triggerMessage } = useNotification();
 
 const createUserProfile = async (userDetails: userObj) => {
   // console.log(userDetails);
   try {
     await setDoc(doc(userProfileCollection, userDetails.id), userDetails);
   } catch (error: any) {
-    console.log(error.message);
+    triggerMessage(error.message);
   }
 };
 

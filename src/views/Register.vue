@@ -9,41 +9,58 @@
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
         <p class="mt-1 text-center text-gray-500">Register</p>
         <form class="mt-3">
-          <TextInput
-            name="Name"
-            input-name="name"
-            :value="name"
-            @update:model-value="name = $event"
-          />
-          <TextInput
-            class="mt-3"
-            name="Email"
-            input-name="email"
-            :value="email"
-            @update:model-value="email = $event"
-          />
-          <PwInput
-            name="Password"
-            input-name="pasword"
-            :value="password"
-            class="mt-3"
-            @update:model-value="password = $event"
-          />
+          <div>
+            <label for="name" class="block text-base text-gray-800 font-medium pl-1 mb-1"
+              >Name</label
+            >
+            <TextInput
+              name="Name"
+              input-name="name"
+              :value="name"
+              @update:model-value="name = $event"
+            />
+          </div>
+          <div class="mt-3">
+            <label for="email" class="block text-base text-gray-800 font-medium pl-1 mb-1"
+              >Email</label
+            >
+            <TextInput
+              name="Email"
+              input-name="email"
+              :value="email"
+              @update:model-value="email = $event"
+            />
+          </div>
+          <div class="mt-3">
+            <label for="password" class="block text-base text-gray-800 font-medium pl-1 mb-1"
+              >Password</label
+            >
+            <PwInput
+              name="Password"
+              input-name="pasword"
+              :value="password"
+              @update:model-value="password = $event"
+            />
+          </div>
+          <div class="mt-3">
+            <label for="confirmPassword" class="block text-base text-gray-800 font-medium pl-1 mb-1"
+              >Confirm Password</label
+            >
+          </div>
           <PwInput
             name="ConfirmPassword"
             input-name="confirmPassword"
             :value="confirmPassword"
-            class="mt-3"
             @update:model-value="confirmPassword = $event"
             @keydown.enter="createUser"
           />
-          <div class="flex items-center justify-center mt-4">
+          <div class="flex items-center justify-center mt-8">
             <button class="authBtn" type="button" @click="createUser">Register</button>
           </div>
         </form>
       </div>
-      <div class="flex items-center justify-center py-4 text-center bg-gray-700">
-        <span class="text-sm text-white">Have an account? </span>
+      <div class="mt-1 mb-6 text-sm font-light text-center text-gray-400">
+        Have an account?
         <router-link to="/login" class="authRouterLink">Login here</router-link>
       </div>
     </div>

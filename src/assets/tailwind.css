@@ -6,10 +6,10 @@
   @apply block w-full px-2 py-1 text-gray-700 placeholder-gray-500 bg-white rounded border focus:border-blue-500 focus:outline-none focus:ring;
 }
 .authBtn {
-  @apply px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded hover:bg-gray-600 focus:outline-none;
+  @apply w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600;
 }
 .authRouterLink {
-  @apply mx-2 text-sm font-bold text-white hover:underline;
+  @apply font-medium text-gray-700 hover:underline;
 }
 .dropDown {
   @apply absolute right-0 z-20 w-32 mt-4 mr-1 bg-white rounded-md shadow-xl overflow-hidden;
@@ -46,7 +46,7 @@
 
 /* backrground and border colors */
 .bg-dark-blue {
-  background-color: #1d3557;
+  background-color: #425e85;
 }
 .bg-secondary-dark {
   background-color: #457b9d;
@@ -57,6 +57,9 @@
 .bg-light {
   background-color: #f1faee;
 }
+.bg-light-default {
+  background-color: #f4faf2;
+}
 .border-secondary-light {
   border-color: #5989a7;
 }
@@ -64,8 +67,8 @@
   border-color: #457b9d;
 }
 .text-dark-blue {
-  color:  #1d3557;
+  color: #1d3557;
 }
 .text-secondary-light {
-  color:  #a8dadc;
+  color: #a8dadc;
 }
