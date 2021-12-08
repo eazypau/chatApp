@@ -43,14 +43,15 @@
     name: "AddContact",
     setup() {
       let userEmail = ref("");
+      let name = ref("");
       const store = useStore();
-
       const addContacts = async () => {
-        if (userEmail.value === "") {
+        if (userEmail.value === "" || name.value === "") {
           return;
         }
-        await store.addUserContact(userEmail.value);
+        await store.addUserContact(userEmail.value, name.value);
         userEmail.value = "";
+        name.value = "";
       };
       return { userEmail, store, addContacts };
     },

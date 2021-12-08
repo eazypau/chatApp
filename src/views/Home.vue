@@ -145,7 +145,8 @@
   import useDOM from "../composable/useDOM";
   import NotificationVue from "../components/molecules/Notification.vue";
   import useNotification from "../composable/useNotification";
-  import { auth } from "../firebase/firebase";
+  import { auth, chatCollection } from "../firebase/firebase";
+  import { getDocs, query, where } from "@firebase/firestore";
 
   const router = useRouter();
   const store = useStore();
@@ -211,21 +212,29 @@
   let showContact = ref(false);
   let showAddContact = ref(false);
 
-  const createChatWindow = (contactDoc: contactsObj) => {
+  const createChatWindow = async (contactDoc: contactsObj) => {
     const chatDocInfo = {
       members: [profileDoc.value.id, contactDoc.id],
       createdBy: profileDoc.value.id,
       type: "private",
     };
     // console.log(chatDocInfo);
+    const chatContainer: any = [];
     store.currentChatInfo = chatDocInfo;
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
+    const fetchAllChats = await getDocs(chatCollection);
+    fetchAllChats.forEach((doc) => {
+      chatContainer.push(doc.data());
+    });
+    chatContainer.filter((item: any) => {
+      return item.members.includes(chatDocInfo.members);
+    });
+    console.log(chatContainer);
     // TODO: need to be able to check whether chat exist
   };
-  //TODO: need to implement autoScroll to bottom when view chat
-  //* maybe can try this https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
+  //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
   const viewChat = async (chatDoc: any) => {
     const container: HTMLDivElement | any = document.getElementById("container");
     // currentChatId.value = chatId;
@@ -235,16 +244,14 @@
     const filteredId = chatDoc.members.filter((item: any) => {
       return item !== profileDoc.value.id;
     });
-    // console.log(filteredId);
-    // store.fetchCurrentChat(chatId).then(() => (container.scrollTop = container.scrollHeight));
     await store.fetchCurrentChat(chatDoc.id);
     await store.fetchOtherUserDetails(filteredId[0]);
-    // container.scrollIntoView({ behavior: "smooth" });
     container.scrollTop = container.scrollHeight;
-    // console.log(container.scrollTop);
   };
   const deleteChatHistory = () => {
-    console.log("delete chat history...");
+    // console.log("delete chat history...");
+    // console.log(currentChatId.value);
+    store.deleteChatDoc(currentChatId.value);
   };
   const sendMessage = async () => {
     const newMessageContent = new Message(
@@ -256,9 +263,6 @@
     // console.log(newMessageContent);
     await store.sendMessage(newMessageContent);
     newMessage.value = "";
-    // const container = document.getElementById("container");
-    // container.scrollIntoView({ behavior: "smooth" });
-    // container.scrollTop = container.scrollHeight;
     const container: HTMLElement | any = document.getElementById("dummy");
     container.scrollIntoView({ behavior: "smooth" });
   };
@@ -272,6 +276,7 @@
   // TODO: implement firebase store (delete profile, delete contact, delete chat history)
   //// create view other user profile
   // TODO: implement firebase storage (delete profile image)
+  // todo: implement google login and also create profile with google acc info
   //// add meta tags for SEO purposes
   //// touch up on the colors
   //// resolve all ts errors and eslint erros...

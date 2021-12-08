@@ -1,4 +1,4 @@
-import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
 import { defineStore } from "pinia";
 import { contactsObj, currentChatObj, messageObj, userObj } from "../classes/type";
 import { updateUserAccEmail } from "../firebase/auth";
@@ -15,6 +15,7 @@ import {
   serverTimestamp,
   orderBy,
   onSnapshot,
+  deleteDoc,
 } from "@firebase/firestore";
 import { chatCollection, db, storage, userProfileCollection } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
@@ -128,7 +129,7 @@ export const useStore = defineStore("store", {
         triggerMessage(error.message);
       }
     },
-    async addUserContact(email: string) {
+    async addUserContact(email: string, name: string) {
       // search profile by email
       if (email === this.profile.email) {
         triggerMessage("You are not allowed to add yourself.");
@@ -165,6 +166,7 @@ export const useStore = defineStore("store", {
         findDoc.forEach((doc: any) => {
           contacts = doc.data();
         });
+        contacts.name = name
         const addContactDoc = await addDoc(userContactCollectionRef, contacts);
         // console.log(addContactDoc.id);
         const updateDocWithId = await updateDoc(
@@ -289,20 +291,29 @@ export const useStore = defineStore("store", {
       const chatDocRef = doc(chatCollection, messageContent.chatId);
       const messageSubCollection = collection(chatCollection, messageContent.chatId, "messages");
       try {
-        const createMsgDoc = await addDoc(messageSubCollection, {
+        const createMsgDoc: any = await addDoc(messageSubCollection, {
           text: messageContent.text,
           sentAt: serverTimestamp(),
           sendBy: messageContent.senderId,
           senderName: messageContent.senderName,
+          id: "",
+        });
+        // console.log(createMsgDoc.id);
+        await updateDoc(doc(chatCollection, messageContent.chatId, "messages", createMsgDoc.id), {
+          id: createMsgDoc.id,
         });
         // after that update the chatsDoc in the recentMessage
+        // console.log("did it failed here?");
         await updateDoc(chatDocRef, {
           "recentMessage.messageText": messageContent.text,
           "recentMessage.sendBy": messageContent.senderId,
           "recentMessage.sentAt": serverTimestamp(),
           "recentMessage.senderName": messageContent.senderName,
         });
+        // console.log("passed update");
         if (firstTime) {
+          await this.fetchUserProfile()
+          await this.fetchChatList()
           await this.fetchCurrentChat(messageContent.chatId);
         }
       } catch (error: any) {
@@ -317,6 +328,41 @@ export const useStore = defineStore("store", {
         return fetchOtherUser.data();
       }
       console.log("user does not exist");
+    },
+    async deleteContact(docId: string) {
+      try {
+        await deleteDoc(doc(userProfileCollection, this.profile.id, "contacts", docId));
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    },
+    deleteProfileImg() {
+      const imageRef = ref(storage, this.profile.id);
+      deleteObject(imageRef)
+        .then(() => {
+          console.log("successfully deleted photo.");
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    },
+    async deleteProfileDoc() {
+      try {
+        await deleteDoc(doc(userProfileCollection, this.profile.id));
+      } catch (error: any) {
+        console.log(error.message);
+      }
+    },
+    async deleteChatDoc(id: string) {
+      try {
+        for (let i = 0; i < this.currentChatContent.length; i++) {
+          const msgId = this.currentChatContent[i].id;
+          await deleteDoc(doc(chatCollection, id, "messages", msgId));
+        }
+        await deleteDoc(doc(chatCollection, id));
+      } catch (error: any) {
+        console.log(error.message);
+      }
     },
   },
 });
