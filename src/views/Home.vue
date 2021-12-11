@@ -102,12 +102,12 @@
                 type="text"
                 name="newMsg"
                 class="rounded-full flex-1 h-8 px-4"
-                @keydown.enter="sendMessage"
+                @keydown.enter.prevent="sendMessage"
               />
               <button
                 type="button"
                 class="ml-3 bg-white hover:bg-gray-200 rounded-full"
-                @click="sendMessage"
+                @click.prevent="sendMessage"
               >
                 <i class="bi bi-arrow-right-short text-xl px-1"></i>
               </button>
@@ -142,15 +142,14 @@
   import { useRouter } from "vue-router";
   import { Message } from "../classes/constructor";
   import { watch } from "@vue/runtime-core";
-  import useDOM from "../composable/useDOM";
+  // import useDOM from "../composable/useDOM";
   import NotificationVue from "../components/molecules/Notification.vue";
   import useNotification from "../composable/useNotification";
-  import { auth, chatCollection } from "../firebase/firebase";
-  import { getDocs, query, where } from "@firebase/firestore";
+  import { auth } from "../firebase/firebase";
 
   const router = useRouter();
   const store = useStore();
-  const { slideDown } = useDOM();
+  // const { slideDown } = useDOM();
   const { isShown, modalMsg } = useNotification();
   onAuthStateChanged(auth, async (user: any) => {
     if (user) {
@@ -195,9 +194,10 @@
     () => listOfChatContent.value,
     () => {
       setTimeout(() => {
-        const div: any = document.getElementById("dummy");
-        // div.scrollTop = div.scrollHeight;
-        div.scrollIntoView({ behavior: "smooth" });
+        // const div: any = document.getElementById("dummy");
+        const div: any = document.getElementById("container");
+        div.scrollTop = div.scrollHeight;
+        // div.scrollIntoView({ behavior: "smooth" });
       }, 500);
     },
     { deep: true }
@@ -218,21 +218,15 @@
       createdBy: profileDoc.value.id,
       type: "private",
     };
-    // console.log(chatDocInfo);
-    const chatContainer: any = [];
     store.currentChatInfo = chatDocInfo;
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
-    const fetchAllChats = await getDocs(chatCollection);
-    fetchAllChats.forEach((doc) => {
-      chatContainer.push(doc.data());
-    });
-    chatContainer.filter((item: any) => {
-      return item.members.includes(chatDocInfo.members);
-    });
-    console.log(chatContainer);
-    // TODO: need to be able to check whether chat exist
+    const findDoc:any = await store.fetchChatDocument(chatDocInfo.members)
+    if (findDoc.length > 0) {
+      await store.fetchCurrentChat(findDoc[0].id)
+      store.currentChatId = findDoc[0].id
+    }
   };
   //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
   const viewChat = async (chatDoc: any) => {
@@ -273,18 +267,20 @@
   //// use which version of firebase? v8 or v9?
   //// implement firebase into the project
   //// implement firebase auth (createUser, login, logout and send new password)
-  // TODO: implement firebase store (delete profile, delete contact, delete chat history)
+  //// implement firebase store (delete profile, delete contact, delete chat history)
   //// create view other user profile
-  // TODO: implement firebase storage (delete profile image)
+  //// implement firebase storage (delete profile image)
+  // todo: sort out the contact list user names
   // todo: implement google login and also create profile with google acc info
   //// add meta tags for SEO purposes
   //// touch up on the colors
   //// resolve all ts errors and eslint erros...
   // TODO: update README.md
-  // TODO: need to comment out some of console log and change some to alert (maybe can consider using sweet alert/the NotificationModal)
+  // TODO: need to comment out some of console log (after final test run) and change some to alert (maybe can consider using sweet alert/the NotificationModal)
   // error page
 </script>
-<style>
+<style scoped>
+  /* scoped is to prevent the styling to be used globally */
   .viewHeight {
     height: 97vh;
   }

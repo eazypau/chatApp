@@ -80,7 +80,7 @@
             <i class="bi bi-pencil-square text-xl mr-1"></i>
             Edit
           </button>
-          <button type="button" class="rounded px-3 py-0.5 bg-red-400 hover:text-white">
+          <button class="rounded px-3 py-0.5 bg-red-400 hover:text-white" type="button" @click="deleteAccount">
             <i class="bi bi-trash-fill text-xl"></i>
             Delete
           </button>
@@ -149,7 +149,17 @@
       const updateProfilePic = async (event: any) => {
         await store.uploadProfileImage(event.target.files[0]);
       };
-      return { edit, name, email, cancelEdit, updateProfile, updateProfilePic };
+
+      const deleteAccount = async () => {
+        const contacts = store.getContactList;
+        for (let contact of contacts) {
+          const contactId = contact.id;
+          await store.deleteContact(contactId);
+        }
+        store.deleteProfileImg()
+        await store.deleteProfileDoc()
+      };
+      return { edit, name, email, cancelEdit, updateProfile, updateProfilePic, deleteAccount };
     },
   });
 </script>

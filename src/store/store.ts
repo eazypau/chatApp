@@ -106,8 +106,6 @@ export const useStore = defineStore("store", {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             // console.log("Upload is " + progress + "% done");
             if (progress === 100) {
-              // store.commit('loadingStatus', false);
-              // store.commit('changeImgSrc', URL.createObjectURL(file));
               triggerMessage("Upload complete!");
             }
           },
@@ -166,7 +164,7 @@ export const useStore = defineStore("store", {
         findDoc.forEach((doc: any) => {
           contacts = doc.data();
         });
-        contacts.name = name
+        contacts.name = name;
         const addContactDoc = await addDoc(userContactCollectionRef, contacts);
         // console.log(addContactDoc.id);
         const updateDocWithId = await updateDoc(
@@ -185,7 +183,6 @@ export const useStore = defineStore("store", {
       }
     },
     async fetchContactList() {
-      // this.contactList = [];
       try {
         const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
         const queryDocs = query(userContactCollectionRef);
@@ -201,10 +198,7 @@ export const useStore = defineStore("store", {
         triggerMessage(error.message);
       }
     },
-    //* for creating/saving chat
-    //* maybe save the id as an array in participants (2 elements in an array)
-    //* maybe can take this as ref: https://www.c-sharpcorner.com/article/chat-app-data-structure-in-firebase-firestore/
-    //* better reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
+    //* reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
     async fetchChatList() {
       if (this.profile.chatGroupIds.length) {
         try {
@@ -244,6 +238,16 @@ export const useStore = defineStore("store", {
         // console.log("Current messages ", this.currentChatContent.join(", "));
       });
       // console.log(this.currentChatContent);
+    },
+    async fetchChatDocument(members: string[]) {
+      const chatContainer: Object[] = [];
+      let findChat = query(chatCollection, where("members", "==", members));
+      const fetchAllChats = await getDocs(findChat);
+      fetchAllChats.forEach((doc) => {
+        chatContainer.push(doc.data());
+      });
+      console.log(chatContainer);
+      return chatContainer;
     },
     async createChat() {
       // const chatCollection = collection(db, "chats");
@@ -312,8 +316,8 @@ export const useStore = defineStore("store", {
         });
         // console.log("passed update");
         if (firstTime) {
-          await this.fetchUserProfile()
-          await this.fetchChatList()
+          await this.fetchUserProfile();
+          await this.fetchChatList();
           await this.fetchCurrentChat(messageContent.chatId);
         }
       } catch (error: any) {
