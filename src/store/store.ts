@@ -148,8 +148,8 @@ export const useStore = defineStore("store", {
         // if exist
         if (Object.keys(contacts).length > 0) {
           // check whether contact exist in userProfile
-          for (let item in this.profile.contacts) {
-            const userId = item;
+          for (let i = 0; i < this.profile.contacts.length; i++) {
+            const userId = this.profile.contacts[i];
             if (userId === contacts.id) {
               triggerMessage(
                 "This is a existing contacts. Please provide a valid email to add new contacts."

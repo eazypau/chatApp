@@ -41,8 +41,8 @@ $ npm run serve
 
 ```
 
-# Deployment
-Make sure to create a .redirects file in the public folder which the follow content
+## Deployment
+Make sure to create a .redirects file in the public folder with the follow content
 ```
 /*  /index.html  200
 ```
