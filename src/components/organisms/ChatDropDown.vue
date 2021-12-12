@@ -28,7 +28,7 @@
                 View Contact
               </button>
             </MenuItem>
-            <MenuItem v-slot="{ active }">
+            <!-- <MenuItem v-slot="{ active }">
               <button
                 :class="[
                   active ? 'bg-secondary-light text-black' : 'text-gray-900',
@@ -39,7 +39,7 @@
                 <i class="bi bi-trash-fill pr-3"></i>
                 Chat History
               </button>
-            </MenuItem>
+            </MenuItem> -->
           </div>
         </MenuItems>
       </transition>

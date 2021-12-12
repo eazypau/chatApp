@@ -9,26 +9,26 @@
       flex
       items-center
       justify-center
-      bg-slate-500 bg-opacity-40
+      bg-slate-200 bg-opacity-40
     "
   >
-    <div class="bg-white border rounded-md overflow-hidden relative p-2">
-      <button class="absolute right-2 top-1 p-1" @click="$emit('closeContact')">
-        <i class="bi bi-x-lg"></i>
+    <div class="bg-white rounded-md shadow-xl overflow-hidden relative p-5">
+      <button class="absolute right-2 top-1 p-1 hover:text-red-600" @click="$emit('closeContact')">
+        <i class="bi bi-x-lg text-xl"></i>
       </button>
-      <div class="pl-1 font-semibold text-lg">
+      <div class="pl-1 font-bold text-xl">
         <p>Add Contact</p>
       </div>
-      <div class="p-1 flex justify-between">
+      <div class="mt-2 flex justify-between border-2 rounded-md">
         <input
           id="email"
           v-model="userEmail"
           type="text"
           name="email"
-          class="border rounded h-8 w-60 pl-2"
+          class="w-60 pl-2"
         />
-        <button class="pl-2" @click="addContacts">
-          <i class="bi bi-plus-square text-lg"></i>
+        <button class="py-1 px-2 border-l-2 hover:bg-gray-200" @click="addContacts">
+          <i class="bi bi-plus text-xl font-bold"></i>
         </button>
       </div>
     </div>
@@ -43,15 +43,15 @@
     name: "AddContact",
     setup() {
       let userEmail = ref("");
-      let name = ref("");
+      // let name = ref("");
       const store = useStore();
       const addContacts = async () => {
-        if (userEmail.value === "" || name.value === "") {
+        if (userEmail.value === "") {
           return;
         }
-        await store.addUserContact(userEmail.value, name.value);
+        await store.addUserContact(userEmail.value);
         userEmail.value = "";
-        name.value = "";
+        // name.value = "";
       };
       return { userEmail, store, addContacts };
     },

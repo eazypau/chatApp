@@ -16,6 +16,7 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
+  arrayRemove,
 } from "@firebase/firestore";
 import { chatCollection, db, storage, userProfileCollection } from "../firebase/firebase";
 import { updateUserEmail, updateUserName, updateUserPhoto } from "../firebase/profile";
@@ -30,6 +31,7 @@ interface ChatState {
   currentChatInfo: any;
   currentChatId: string;
   otherUser: any;
+  isUnsubscribe: boolean;
 }
 
 const { triggerMessage } = useNotification();
@@ -44,6 +46,7 @@ export const useStore = defineStore("store", {
     currentChatInfo: {},
     currentChatId: "",
     otherUser: {} as userObj,
+    isUnsubscribe: false,
   }),
   getters: {
     getProfile(state) {
@@ -83,8 +86,7 @@ export const useStore = defineStore("store", {
       try {
         updateUserName(this.user, newProfileInfo.name);
         if (newProfileInfo.email !== this.profile.email) {
-          console.log("trigger update email");
-
+          // console.log("trigger update email");
           updateUserAccEmail(newProfileInfo.email);
           updateUserEmail(this.user, newProfileInfo.email);
           this.profile.email = newProfileInfo.email;
@@ -127,72 +129,64 @@ export const useStore = defineStore("store", {
         triggerMessage(error.message);
       }
     },
-    async addUserContact(email: string, name: string) {
-      // search profile by email
+    // change to add a contact doc in the user profile to save all the added user id
+    // then when fetching contact, can just use userId and list down the contacts
+    async addUserContact(email: string) {
+      let contacts: any = {};
+      // check if is your own email
       if (email === this.profile.email) {
         triggerMessage("You are not allowed to add yourself.");
         return;
       }
-      let contacts: any = {};
-      let duplicate: any = [];
-      const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
-      const checkDuplicate = query(userContactCollectionRef, where("email", "==", email));
-      const getDuplciate = await getDocs(checkDuplicate);
       try {
-        getDuplciate.forEach((doc: any) => {
-          duplicate.push(doc.data());
-        });
-      } catch (error) {
-        console.log(error);
-      }
-      if (duplicate.length > 0) {
-        triggerMessage("Contact already exist!");
-        return;
-      }
-      const q: any = query(userProfileCollection, where("email", "==", email));
-      const isExist: any = [];
-      // if exist add
-      const findDoc: any = await getDocs(q);
-      findDoc.forEach((doc: any) => {
-        isExist.push(doc.data());
-      });
-      if (isExist.length === 0) {
-        triggerMessage("Contact does not exist! Please try again.");
-        return;
-      }
-      try {
-        findDoc.forEach((doc: any) => {
+        // check whether the user exist with the email as the input
+        const q = query(userProfileCollection, where("email", "==", email));
+        const fetchUserDoc = await getDocs(q);
+        fetchUserDoc.forEach((doc) => {
           contacts = doc.data();
         });
-        contacts.name = name;
-        const addContactDoc = await addDoc(userContactCollectionRef, contacts);
-        // console.log(addContactDoc.id);
-        const updateDocWithId = await updateDoc(
-          doc(userProfileCollection, this.user, "contacts", addContactDoc.id),
-          {
-            docId: addContactDoc.id,
+        // if exist
+        if (Object.keys(contacts).length > 0) {
+          // check whether contact exist in userProfile
+          for (let item in this.profile.contacts) {
+            const userId = item;
+            if (userId === contacts.id) {
+              triggerMessage(
+                "This is a existing contacts. Please provide a valid email to add new contacts."
+              );
+              return;
+            }
           }
-        );
-        // trigger fetch contacts
-        if (!this.contactList) {
-          await this.fetchContactList();
         }
-        triggerMessage("Successfully add contact.");
+        const addUserContact = await updateDoc(doc(userProfileCollection, this.user), {
+          contacts: arrayUnion(contacts.id),
+        });
+        // await this.fetchUserProfile();
+        this.contactList.push(contacts);
+        triggerMessage("Successfully added new contact.");
       } catch (error: any) {
         triggerMessage(error.message);
       }
     },
     async fetchContactList() {
       try {
-        const userContactCollectionRef = collection(userProfileCollection, this.user, "contacts");
-        const queryDocs = query(userContactCollectionRef);
-        const unsubscribe = onSnapshot(queryDocs, (querySnapshot: any) => {
-          this.contactList = [];
-          querySnapshot.forEach((doc: any) => {
-            this.contactList.push(doc.data());
-          });
-          // console.log("Current messages ", this.currentChatContent.join(", "));
-        });
+        this.contactList = [];
+        for (let i = 0; i < this.profile.contacts.length; i++) {
+          const id = this.profile.contacts[i];
+          const fetchUser: any = await getDoc(doc(userProfileCollection, id));
+          if (fetchUser.exists()) {
+            this.contactList.push(fetchUser.data());
+          }
+          this.contactList = [...new Set(this.contactList)];
+        }
+
+        // const q = query(userProfileCollection)
+        // const unsubscribe = onSnapshot(q, (querySnapShot: any) => {
+        //   this.contactList = []
+        //   querySnapShot.forEach((doc: any) => {
+        //     this.contactList.push(doc.data())
+        //   });
+        // })
         // console.log(this.contactList);
       } catch (error: any) {
         triggerMessage(error.message);
@@ -220,6 +214,9 @@ export const useStore = defineStore("store", {
             }
             // console.log(this.chatList);
           });
+          if (this.isUnsubscribe) {
+            unsub();
+          }
         } catch (error: any) {
           triggerMessage(error.message);
         }
@@ -237,6 +234,9 @@ export const useStore = defineStore("store", {
         });
         // console.log("Current messages ", this.currentChatContent.join(", "));
       });
+      if (this.isUnsubscribe) {
+        unsubscribe();
+      }
       // console.log(this.currentChatContent);
     },
     async fetchChatDocument(members: string[]) {
@@ -246,7 +246,7 @@ export const useStore = defineStore("store", {
       fetchAllChats.forEach((doc) => {
         chatContainer.push(doc.data());
       });
-      console.log(chatContainer);
+      // console.log(chatContainer);
       return chatContainer;
     },
     async createChat() {
@@ -290,7 +290,7 @@ export const useStore = defineStore("store", {
         messageContent.chatId = getId;
         firstTime = true;
         this.currentChatId = getId;
-        console.log(messageContent);
+        // console.log(messageContent);
       }
       const chatDocRef = doc(chatCollection, messageContent.chatId);
       const messageSubCollection = collection(chatCollection, messageContent.chatId, "messages");
@@ -331,20 +331,13 @@ export const useStore = defineStore("store", {
         this.otherUser = fetchOtherUser.data();
         return fetchOtherUser.data();
       }
-      console.log("user does not exist");
-    },
-    async deleteContact(docId: string) {
-      try {
-        await deleteDoc(doc(userProfileCollection, this.profile.id, "contacts", docId));
-      } catch (error: any) {
-        console.log(error.message);
-      }
+      // console.log("user does not exist");
     },
     deleteProfileImg() {
       const imageRef = ref(storage, this.profile.id);
       deleteObject(imageRef)
         .then(() => {
-          console.log("successfully deleted photo.");
+          // console.log("successfully deleted photo.");
         })
         .catch((err) => {
           console.log(err.message);
@@ -357,16 +350,25 @@ export const useStore = defineStore("store", {
         console.log(error.message);
       }
     },
-    async deleteChatDoc(id: string) {
-      try {
-        for (let i = 0; i < this.currentChatContent.length; i++) {
-          const msgId = this.currentChatContent[i].id;
-          await deleteDoc(doc(chatCollection, id, "messages", msgId));
-        }
-        await deleteDoc(doc(chatCollection, id));
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    },
+    // async deleteChatDoc(id: string) {
+    //   try {
+    //     // for (let i = 0; i < this.currentChatContent.length; i++) {
+    //     //   const msgId = this.currentChatContent[i].id;
+    //     //   await deleteDoc(doc(chatCollection, id, "messages", msgId));
+    //     // }
+    //     // await deleteDoc(doc(chatCollection, id));
+    //     console.log(id);
+    //     await updateDoc(doc(userProfileCollection, this.profile.id), {
+    //       chatGroupIds: arrayRemove(id),
+    //     });
+    //     this.currentChatContent = [];
+    //     this.chatList = this.chatList.filter((item: any) => {
+    //       return item.id !== id;
+    //     });
+    //     console.log(this.chatList);
+    //   } catch (error: any) {
+    //     console.log(error.message);
+    //   }
+    // },
   },
 });

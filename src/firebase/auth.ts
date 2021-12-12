@@ -5,6 +5,7 @@ import {
   signOut,
   updateEmail,
 } from "@firebase/auth";
+import { async } from "@firebase/util";
 import useNotification from "../composable/useNotification";
 // import { Profile } from "../classes/constructor";
 import router from "../router";
@@ -19,7 +20,7 @@ const signInExistingUser = (email: string, password: string) => {
       const user = userCred.user;
       // store.user = user.uid;
       localStorage.setItem("firebaseToken", user.uid);
-      router.push({ name: "Home" });
+      return router.push({ name: "Home" });
     })
     .catch((err) => {
       triggerMessage(err.message);
@@ -48,6 +49,7 @@ const createUserAcc = (userDetails: { email: string; password: string; name: str
         email: userDetails.email,
         photo: "",
         chatGroupIds: [],
+        contacts: [],
       };
       localStorage.setItem("firebaseToken", user.uid);
       // store.user = user.uid;

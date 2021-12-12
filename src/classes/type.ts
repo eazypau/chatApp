@@ -4,6 +4,7 @@ type userObj = {
   email: string;
   photo: string;
   chatGroupIds: string[];
+  contacts: string[];
 };
 
 type contactsObj = {

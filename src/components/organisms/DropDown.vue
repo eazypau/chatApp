@@ -81,12 +81,15 @@
     components: { Menu, MenuButton, MenuItems, MenuItem },
     setup() {
       const store = useStore();
-      const logOut = () => {
+      const logOut = async () => {
         // console.log("log out...");
+        // store.isUnsubscribe = true
+        // await store.fetchChatList()
+        // await store.fetchCurrentChat()
         logOutUser();
         store.$reset();
       };
-      return { store, logOut };
+      return { logOut };
     },
   });
 </script>

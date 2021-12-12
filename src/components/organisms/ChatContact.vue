@@ -5,7 +5,7 @@
       @click="viewChat"
     >
       <img
-        class="w-10 h-10 rounded-full"
+        class="w-10 h-10 rounded-full object-cover object-center"
         :src="
           photo
             ? photo

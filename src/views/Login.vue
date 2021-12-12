@@ -70,6 +70,7 @@
             hover:bg-blue-400
             focus:bg-blue-400 focus:outline-none
           "
+          @click="loginUsingGoogleAcc"
         >
           <svg class="w-4 h-4 mx-2 fill-current" viewBox="0 0 24 24">
             <path
@@ -82,9 +83,7 @@
 
       <p class="mt-8 text-xs font-light text-center text-gray-400">
         Don't have an account?
-        <router-link to="/register" class="authRouterLink"
-          >Create One</router-link
-        >
+        <router-link to="/register" class="authRouterLink">Create One</router-link>
       </p>
     </div>
   </div>
@@ -94,16 +93,23 @@
   import TextInput from "../components/molecules/TextInput.vue";
   import PwInput from "../components/molecules/PwInput.vue";
   import { signInExistingUser } from "../firebase/auth";
+  import { signInWithGoogle } from "../firebase/authGoogle";
+  import { useRouter } from "vue-router";
 
   let email = ref("");
   let password = ref("");
   let loading = ref(false);
+  const router = useRouter();
 
   const login = () => {
     // console.log('login');
     loading.value = true;
     signInExistingUser(email.value, password.value);
+    // router.push("/");
   };
 
-  // TODO: add google login
+  const loginUsingGoogleAcc = () => {
+    loading.value = true;
+    signInWithGoogle();
+  };
 </script>

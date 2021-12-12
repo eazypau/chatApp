@@ -14,7 +14,10 @@
         </form>
       </div>
       <div class="flex items-center justify-center mt-5 mb-2">
-        <button class="authBtn" type="button">Request New Password</button>
+        <button class="authBtn" type="button">
+          <span v-if="!loading">Request New Password</span
+          ><span v-else class="animation-pulse">Loading...</span>
+        </button>
       </div>
       <div class="mt-5 mb-3 text-sm font-light text-center text-gray-400">
         Have an account?
@@ -33,9 +36,12 @@
   import { sendNewPassWord } from "../firebase/auth";
 
   let email = ref("");
+  let loading = ref(false);
 
   const getNewPassword = () => {
     // console.log('getting new password...');
+    loading.value = true;
     sendNewPassWord(email.value);
+    loading.value = false;
   };
 </script>

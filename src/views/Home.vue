@@ -31,7 +31,7 @@
         >
           <!-- left header -->
           <img
-            class="h-10 rounded-full"
+            class="w-10 h-10 rounded-full object-cover object-center"
             :src="
               profileDoc.photo
                 ? profileDoc.photo
@@ -64,7 +64,7 @@
             <div class="flex items-center">
               <img
                 v-if="currentChatName !== ''"
-                class="w-10 h-10 rounded-full"
+                class="w-10 h-10 rounded-full object-cover object-center"
                 :src="
                   currentPhoto === ''
                     ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
@@ -76,7 +76,6 @@
             <ChatDropDown
               v-if="currentChatName !== ''"
               @view-contact-details="showOtherProfile = true"
-              @delete-chat="deleteChatHistory"
             />
           </div>
           <div class="bg-light flex-1 flex flex-col justify-between">
@@ -150,7 +149,8 @@
   const router = useRouter();
   const store = useStore();
   // const { slideDown } = useDOM();
-  const { isShown, modalMsg } = useNotification();
+  const { isShown, modalMsg, triggerMessage } = useNotification();
+
   onAuthStateChanged(auth, async (user: any) => {
     if (user) {
       // console.log(user);
@@ -158,10 +158,9 @@
       await store.fetchUserProfile();
       await store.fetchContactList();
       await store.fetchChatList();
-    } else {
-      router.push("/login");
     }
   });
+
   const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
     if (store.getChatContent === []) {
@@ -190,18 +189,20 @@
     return store.getProfile.photo;
   });
 
-  watch(
-    () => listOfChatContent.value,
-    () => {
-      setTimeout(() => {
-        // const div: any = document.getElementById("dummy");
-        const div: any = document.getElementById("container");
-        div.scrollTop = div.scrollHeight;
-        // div.scrollIntoView({ behavior: "smooth" });
-      }, 500);
-    },
-    { deep: true }
-  );
+  // watch(
+  //   () => listOfChatContent.value,
+  //   () => {
+  //     if (store.currentChatContent !== []) {
+  //       setTimeout(() => {
+  //         // const div: any = document.getElementById("dummy");
+  //         const div: any = document.getElementById("container");
+  //         div.scrollTop = div.scrollHeight;
+  //         // div.scrollIntoView({ behavior: "smooth" });
+  //       }, 500);
+  //     }
+  //   },
+  //   { deep: true }
+  // );
 
   let currentChatName = ref("");
   const currentChatId = computed(() => store.getCurrentChatId);
@@ -222,10 +223,10 @@
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
-    const findDoc:any = await store.fetchChatDocument(chatDocInfo.members)
+    const findDoc: any = await store.fetchChatDocument(chatDocInfo.members);
     if (findDoc.length > 0) {
-      await store.fetchCurrentChat(findDoc[0].id)
-      store.currentChatId = findDoc[0].id
+      await store.fetchCurrentChat(findDoc[0].id);
+      store.currentChatId = findDoc[0].id;
     }
   };
   //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
@@ -242,12 +243,15 @@
     await store.fetchOtherUserDetails(filteredId[0]);
     container.scrollTop = container.scrollHeight;
   };
-  const deleteChatHistory = () => {
-    // console.log("delete chat history...");
-    // console.log(currentChatId.value);
-    store.deleteChatDoc(currentChatId.value);
-  };
+  // const deleteChatHistory = () => {
+  //   store.deleteChatDoc(currentChatId.value);
+  //   currentChatName.value = "";
+  // };
   const sendMessage = async () => {
+    if (newMessage.value === "") {
+      triggerMessage("Please enter a text");
+      return;
+    }
     const newMessageContent = new Message(
       profileDoc.value.name,
       newMessage.value,
@@ -261,7 +265,6 @@
     container.scrollIntoView({ behavior: "smooth" });
   };
 
-  //! target to get everything done by 4th Dec
   //// create chat ballons, chat pills, modal and dropdown components
   //// create the chat window at home page
   //// use which version of firebase? v8 or v9?
@@ -270,14 +273,15 @@
   //// implement firebase store (delete profile, delete contact, delete chat history)
   //// create view other user profile
   //// implement firebase storage (delete profile image)
-  // todo: sort out the contact list user names
-  // todo: implement google login and also create profile with google acc info
+  //// add loading icon at register button and reset pw button
+  //// sort out the contact list user names
+  //// implement google login and also create profile with google acc info
   //// add meta tags for SEO purposes
   //// touch up on the colors
   //// resolve all ts errors and eslint erros...
-  // TODO: update README.md
-  // TODO: need to comment out some of console log (after final test run) and change some to alert (maybe can consider using sweet alert/the NotificationModal)
-  // error page
+  // TODO: update README.md (now left the video/gif)
+  ////  need to comment out some of console log (after final test run) and change some to alert (maybe can consider using sweet alert/the NotificationModal)
+  //// error page
 </script>
 <style scoped>
   /* scoped is to prevent the styling to be used globally */

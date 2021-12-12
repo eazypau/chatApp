@@ -151,11 +151,6 @@
       };
 
       const deleteAccount = async () => {
-        const contacts = store.getContactList;
-        for (let contact of contacts) {
-          const contactId = contact.id;
-          await store.deleteContact(contactId);
-        }
         store.deleteProfileImg()
         await store.deleteProfileDoc()
       };

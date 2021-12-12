@@ -55,7 +55,10 @@
             @keydown.enter="createUser"
           />
           <div class="flex items-center justify-center mt-8">
-            <button class="authBtn" type="button" @click="createUser">Register</button>
+            <button class="authBtn" type="button" @click="createUser">
+              <span v-if="!loading">Register</span
+              ><span v-else class="animation-pulse">Loading...</span>
+            </button>
           </div>
         </form>
       </div>
@@ -79,6 +82,7 @@
   let confirmPassword = ref("");
   let popUpMsg = ref("");
   let showMsg = ref(false);
+  let loading = ref(false);
   const createUser = async () => {
     // console.log('create');
     if (
@@ -100,6 +104,7 @@
       confirmPassword.value = "";
       return;
     }
+    loading.value = true;
     const userDetails = {
       email: email.value,
       name: name.value,

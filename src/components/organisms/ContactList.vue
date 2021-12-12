@@ -9,31 +9,34 @@
       flex
       items-center
       justify-center
-      bg-slate-500 bg-opacity-40
+      bg-slate-200 bg-opacity-40
     "
   >
-    <div class="w-96 h-72 bg-white border rounded-md overflow-hidden relative">
+    <div class="w-96 h-72 bg-white shadow-xl rounded-md overflow-hidden relative">
       <button class="absolute right-2 top-2 p-1" @click="$emit('closeContact')">
-        <i class="bi bi-x-lg"></i>
+        <i class="bi bi-x-lg text-white"></i>
       </button>
-      <div class="px-6 py-3 bg-sky-100">
-        <p class="font-semibold">Contact List</p>
+      <div class="px-6 py-3 bg-dark-blue">
+        <p class="font-bold text-lg text-white">Contact List</p>
       </div>
       <div
-        v-for="friend, index in contacts"
+        v-for="(friend, index) in contacts"
         :key="index"
-        class="flex items-center py-2 px-4 border-b border-gray-300 hover:bg-gray-100"
+        class="px-1 hover:bg-gray-100 cursor-pointer"
         @click="$emit('createChat', friend)"
       >
-        <img
-          class="w-8 h-8 rounded-full"
-          :src="
-            friend.photo === ''
-              ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
-              : friend.photo
-          "
-        />
-        <p class="pl-2 text-sm">{{ friend.name }}</p>
+        <div class="flex items-center py-2 px-3 hover:bg-gray-100">
+          <img
+            class="w-8 h-8 rounded-full object-cover"
+            :src="
+              friend.photo === ''
+                ? 'https://pbs.twimg.com/profile_images/1176237957851881472/CHOXLj9b_400x400.jpg'
+                : friend.photo
+            "
+          />
+          <p class="pl-2 text-sm font-semibold">{{ friend.name }}</p>
+        </div>
+        <div class="h-px w-full bg-gray-300"></div>
       </div>
     </div>
   </div>
@@ -53,7 +56,7 @@
         //     return item.hasOwnProperty('name') && item.hasOwnProperty('photo')
         //   })
         // }
-      }
+      },
     },
   });
 </script>
