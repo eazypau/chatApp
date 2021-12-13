@@ -2,7 +2,7 @@
   <div
     class="
       absolute
-      z-10
+      z-30
       inset-0
       w-screen
       h-screen
@@ -10,6 +10,7 @@
       items-center
       justify-center
       bg-slate-200 bg-opacity-40
+      px-5
     "
   >
     <div class="w-96 h-72 bg-white shadow-xl rounded-md overflow-hidden relative">

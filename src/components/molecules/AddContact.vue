@@ -2,7 +2,7 @@
   <div
     class="
       absolute
-      z-10
+      z-30
       inset-0
       w-screen
       h-screen

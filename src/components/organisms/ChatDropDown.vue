@@ -28,6 +28,18 @@
                 View Contact
               </button>
             </MenuItem>
+            <MenuItem v-slot="{ active }">
+              <button
+                :class="[
+                  active ? 'bg-secondary-light text-black' : 'text-gray-900',
+                  'group flex md:hidden rounded-md items-center w-full px-2 py-2 text-sm',
+                ]"
+                @click="$emit('quitChat')"
+              >
+                <i class="bi bi-arrow-90deg-left pr-3"></i>
+                Back
+              </button>
+            </MenuItem>
             <!-- <MenuItem v-slot="{ active }">
               <button
                 :class="[

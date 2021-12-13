@@ -14,7 +14,7 @@
       <transition name="addContactAnimate">
         <AddContact v-if="showAddContact" @close-contact="showAddContact = false" />
       </transition>
-      <div class="w-3/12 flex flex-col">
+      <div class="z-10 w-full md:w-4/12 lg:w-3/12 flex flex-col">
         <!-- left panel -->
         <Profile
           v-if="showProfile"
@@ -45,7 +45,7 @@
             @open-profile="showProfile = true"
           />
         </div>
-        <div v-if="!showProfile" class="bg-white flex-1">
+        <div v-if="!showProfile" class="bg-white flex-1 listOfChatHeight">
           <!-- body -->
           <ChatContact
             v-for="(chatName, index) in chatList"
@@ -56,7 +56,12 @@
         </div>
       </div>
       <div class="w-px bg-secondary-dark"></div>
-      <div class="w-9/12 flex">
+      <div
+        :class="[
+          selectedAChat ? 'z-20' : 'z-0',
+          'w-full md:w-8/12 lg:w-9/12 absolute md:flex md:relative',
+        ]"
+      >
         <!-- right panel -->
         <div class="flex flex-col h-full flex-1">
           <div class="navigationHeight flex items-center justify-between py-2 px-4 bg-dark-blue">
@@ -76,6 +81,7 @@
             <ChatDropDown
               v-if="currentChatName !== ''"
               @view-contact-details="showOtherProfile = true"
+              @quit-chat="minimizeChat"
             />
           </div>
           <div class="bg-light flex-1 flex flex-col justify-between">
@@ -113,14 +119,26 @@
             </div>
           </div>
         </div>
-        <Profile
+        <div
           v-if="showOtherProfile"
-          class="absolute inset-0 w-4/12"
+          class="absolute inset-y-0 right-0 z-10 w-full lg:relative lg:w-4/12 bg-white"
+        >
+          <Profile
+            class=""
+            :profile-img="otherUserProfilePic"
+            :user-email="otherUserProfile.email"
+            :user-name="otherUserProfile.name"
+            @close-profile="showOtherProfile = false"
+          />
+        </div>
+        <!-- <Profile
+          v-if="showOtherProfile"
+          class="absolute inset-y-0 right-0 z-10 w-full lg:w-4/12"
           :profile-img="otherUserProfilePic"
           :user-email="otherUserProfile.email"
           :user-name="otherUserProfile.name"
           @close-profile="showOtherProfile = false"
-        />
+        /> -->
       </div>
     </div>
   </div>
@@ -212,8 +230,14 @@
   let showOtherProfile = ref(false);
   let showContact = ref(false);
   let showAddContact = ref(false);
+  let selectedAChat = ref(false);
 
+  const minimizeChat = () => {
+    // console.log("close chat");
+    selectedAChat.value = false;
+  };
   const createChatWindow = async (contactDoc: contactsObj) => {
+    const container: HTMLDivElement | any = document.getElementById("container");
     const chatDocInfo = {
       members: [profileDoc.value.id, contactDoc.id],
       createdBy: profileDoc.value.id,
@@ -228,6 +252,8 @@
       await store.fetchCurrentChat(findDoc[0].id);
       store.currentChatId = findDoc[0].id;
     }
+    container.scrollTop = container.scrollHeight;
+    selectedAChat.value = true;
   };
   //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
   const viewChat = async (chatDoc: any) => {
@@ -242,6 +268,7 @@
     await store.fetchCurrentChat(chatDoc.id);
     await store.fetchOtherUserDetails(filteredId[0]);
     container.scrollTop = container.scrollHeight;
+    selectedAChat.value = true;
   };
   // const deleteChatHistory = () => {
   //   store.deleteChatDoc(currentChatId.value);
@@ -290,10 +317,26 @@
   }
   .navigationHeight,
   .inputBarHeight {
-    height: 6vh;
+    height: 7vh;
+  }
+  .listOfChatHeight {
+    height: 89vh;
+    overflow: auto;
   }
   .bodyHeight {
-    height: 85vh;
+    height: 83vh;
+  }
+  @media (min-width: 768px) {
+    .navigationHeight,
+    .inputBarHeight {
+      height: 6vh;
+    }
+    .bodyHeight {
+      height: 85vh;
+    }
+    .listOfChatHeight {
+      height: 91vh;
+    }
   }
   .addContactAnimate-enter-active,
   .addContactAnimate-leave-active {

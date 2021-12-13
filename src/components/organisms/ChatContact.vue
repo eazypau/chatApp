@@ -1,5 +1,5 @@
 <template>
-  <div class="hover:bg-gray-100">
+  <div class="hover:bg-gray-100 overflow-hidden">
     <div
       class="flex items-center mx-2 py-2 px-2 border-b border-gray-200 hover:cursor-pointer"
       @click="viewChat"
@@ -14,7 +14,7 @@
       />
       <div class="pl-3">
         <p class="text-sm font-medium">{{ name }}</p>
-        <p class="text-xs">{{ item.recentMessage.messageText }}</p>
+        <p class="text-xs truncate">{{ item.recentMessage.messageText }}</p>
       </div>
     </div>
   </div>

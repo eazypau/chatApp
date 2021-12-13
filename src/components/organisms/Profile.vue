@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto relative minHeight z-20 border-t border-secondary-dark">
+  <div class="mx-auto relative minHeight z-20 border-t border-secondary-dark bg-white">
     <button class="absolute top-0 left-0 pt-2 pl-3" type="button" @click="$emit('closeProfile')">
       <i
         class="bi bi-arrow-left text-xl xl:text-2xl 2xl:text-3xl text-gray-600 hover:text-gray-300"
@@ -80,7 +80,11 @@
             <i class="bi bi-pencil-square text-xl mr-1"></i>
             Edit
           </button>
-          <button class="rounded px-3 py-0.5 bg-red-400 hover:text-white" type="button" @click="deleteAccount">
+          <button
+            class="rounded px-3 py-0.5 bg-red-400 hover:text-white"
+            type="button"
+            @click="deleteAccount"
+          >
             <i class="bi bi-trash-fill text-xl"></i>
             Delete
           </button>
@@ -112,6 +116,8 @@
   import { ref } from "@vue/reactivity";
   import TextInput from "../molecules/TextInput.vue";
   import { useStore } from "../../store/store";
+  import { deleteUserAcc } from "../../firebase/auth";
+  import { useRouter } from "vue-router";
 
   export default defineComponent({
     name: "ProfileWindow",
@@ -127,6 +133,7 @@
     },
     setup(props) {
       const store = useStore();
+      const router = useRouter();
       let edit = ref(false);
       let name = ref(props.userName);
       let email = ref(props.userEmail);
@@ -151,8 +158,10 @@
       };
 
       const deleteAccount = async () => {
-        store.deleteProfileImg()
-        await store.deleteProfileDoc()
+        store.deleteProfileImg();
+        await store.deleteProfileDoc();
+        deleteUserAcc();
+        router.push("/login")
       };
       return { edit, name, email, cancelEdit, updateProfile, updateProfilePic, deleteAccount };
     },

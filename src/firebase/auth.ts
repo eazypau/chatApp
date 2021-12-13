@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateEmail,
+  deleteUser,
 } from "@firebase/auth";
 import { async } from "@firebase/util";
 import useNotification from "../composable/useNotification";
@@ -83,4 +84,22 @@ const updateUserAccEmail = (email: string) => {
     });
 };
 
-export { signInExistingUser, logOutUser, createUserAcc, sendNewPassWord, updateUserAccEmail };
+const deleteUserAcc = () => {
+  const user: any = auth.currentUser;
+  deleteUser(user)
+    .then(() => {
+      triggerMessage("Successfully deleted your account.");
+    })
+    .catch((err: any) => {
+      triggerMessage(err.message);
+    });
+};
+
+export {
+  signInExistingUser,
+  logOutUser,
+  createUserAcc,
+  sendNewPassWord,
+  updateUserAccEmail,
+  deleteUserAcc,
+};
