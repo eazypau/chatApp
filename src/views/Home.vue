@@ -173,11 +173,14 @@
     if (user) {
       // console.log(user);
       store.user = user.uid;
-      await store.fetchUserProfile();
-      await store.fetchContactList();
-      await store.fetchChatList();
+      // await store.fetchUserProfile();
+      // await store.fetchContactList();
+      // await store.fetchChatList();
     }
   });
+  await store.fetchUserProfile();
+  await store.fetchContactList();
+  await store.fetchChatList();
 
   const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
@@ -248,11 +251,14 @@
     currentChatName.value = contactDoc.name;
     showContact.value = false;
     const findDoc: any = await store.fetchChatDocument(chatDocInfo.members);
+    console.log(findDoc);
     if (findDoc.length > 0) {
       await store.fetchCurrentChat(findDoc[0].id);
       store.currentChatId = findDoc[0].id;
     }
-    container.scrollTop = container.scrollHeight;
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 500);
     selectedAChat.value = true;
   };
   //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up

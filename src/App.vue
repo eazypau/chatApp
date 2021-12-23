@@ -1,5 +1,9 @@
 <template>
-  <router-view></router-view>
+  <router-view v-slot="{ Component }">
+    <suspense>
+      <component :is="Component" />
+    </suspense>
+  </router-view>
 </template>
 <script setup lang="ts">
   import { onAuthStateChanged } from '@firebase/auth';

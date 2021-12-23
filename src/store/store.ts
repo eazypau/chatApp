@@ -240,14 +240,38 @@ export const useStore = defineStore("store", {
       // console.log(this.currentChatContent);
     },
     async fetchChatDocument(members: string[]) {
-      const chatContainer: Object[] = [];
-      let findChat = query(chatCollection, where("members", "==", members));
-      const fetchAllChats = await getDocs(findChat);
+      let chatContainer: any[] = [];
+      let filtered: any[] = [];
+      let fetchAllChats = await getDocs(chatCollection)
       fetchAllChats.forEach((doc) => {
-        chatContainer.push(doc.data());
-      });
-      // console.log(chatContainer);
-      return chatContainer;
+        chatContainer.push(doc.data())
+      })
+      for (let i = 0; i < chatContainer.length; i++) {
+        const chatMembers = chatContainer[i].members;
+        let validate
+        if (chatMembers.length === members.length) {
+          validate = chatMembers.every((element:string) => {
+            if (chatMembers.includes(element)) {
+              return true
+            }
+            return false
+          })
+          if (validate === true) {
+            filtered.push(chatContainer[i])
+          }
+        }
+      }
+      
+      // let findChat = query(chatCollection, where("members", "==", members));
+      // console.log(findChat);
+      // const fetchAllChats = await getDocs(findChat);
+      // fetchAllChats.forEach((doc) => {
+      //   chatContainer.push(doc.data());
+      //   console.log("done push");
+      // });
+      console.log(filtered);
+      
+      return filtered;
     },
     async createChat() {
       // const chatCollection = collection(db, "chats");
