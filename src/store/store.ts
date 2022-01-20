@@ -243,6 +243,7 @@ export const useStore = defineStore("store", {
       let chatContainer: any[] = [];
       let filtered: any[] = [];
       let fetchAllChats = await getDocs(chatCollection)
+      //* ref: https://bobbyhadz.com/blog/javascript-check-if-two-arrays-have-same-elements
       fetchAllChats.forEach((doc) => {
         chatContainer.push(doc.data())
       })
@@ -261,7 +262,6 @@ export const useStore = defineStore("store", {
           }
         }
       }
-      
       // let findChat = query(chatCollection, where("members", "==", members));
       // console.log(findChat);
       // const fetchAllChats = await getDocs(findChat);
@@ -269,8 +269,6 @@ export const useStore = defineStore("store", {
       //   chatContainer.push(doc.data());
       //   console.log("done push");
       // });
-      console.log(filtered);
-      
       return filtered;
     },
     async createChat() {

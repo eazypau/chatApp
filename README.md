@@ -18,7 +18,6 @@ This is a personal project of mine called Eazy Chat App. It is basically for use
 ## Features
 
 - Email Login
-- Google Sign In
 - Register
 - Request new password
 - Delete Account
@@ -56,6 +55,7 @@ put the video/gif here
 - [Vue, guard routes with Firebase Authentication](https://dev.to/gautemeekolsen/vue-guard-routes-with-firebase-authentication-f4l)
 - [Keep overflow div scrolled to bottom unless user scrolls up](https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up)
 - [Redirects and rewrites in Netlify](https://docs.netlify.com/routing/redirects/)
+- [How to check if two arrays has same elements](https://bobbyhadz.com/blog/javascript-check-if-two-arrays-have-same-elements)
 
 
 

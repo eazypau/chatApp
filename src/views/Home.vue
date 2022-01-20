@@ -210,20 +210,20 @@
     return store.getProfile.photo;
   });
 
-  // watch(
-  //   () => listOfChatContent.value,
-  //   () => {
-  //     if (store.currentChatContent !== []) {
-  //       setTimeout(() => {
-  //         // const div: any = document.getElementById("dummy");
-  //         const div: any = document.getElementById("container");
-  //         div.scrollTop = div.scrollHeight;
-  //         // div.scrollIntoView({ behavior: "smooth" });
-  //       }, 500);
-  //     }
-  //   },
-  //   { deep: true }
-  // );
+  watch(
+    () => listOfChatContent.value,
+    () => {
+      if (store.currentChatContent !== []) {
+        setTimeout(() => {
+          // const div: any = document.getElementById("dummy");
+          const div: any = document.getElementById("container");
+          div.scrollTop = div.scrollHeight;
+          // div.scrollIntoView({ behavior: "smooth" });
+        }, 500);
+      }
+    },
+    { deep: true }
+  );
 
   let currentChatName = ref("");
   const currentChatId = computed(() => store.getCurrentChatId);

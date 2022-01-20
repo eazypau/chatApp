@@ -40,15 +40,15 @@
         </div>
       </form>
 
-      <div class="flex items-center justify-between mt-4">
+      <!-- <div class="flex items-center justify-between mt-4">
         <span class="w-1/5 border-b dark:border-gray-600 lg:w-1/5"></span>
         <a href="#" class="text-xs text-center text-gray-500 uppercase hover:underline"
           >or login with Social Media</a
         >
         <span class="w-1/5 border-b lg:w-1/5"></span>
-      </div>
+      </div> -->
 
-      <div class="flex items-center mt-6 -mx-2">
+      <!-- <div class="flex items-center mt-6 -mx-2">
         <button
           type="button"
           class="
@@ -79,7 +79,7 @@
           </svg>
           <span class="hidden mx-2 sm:inline">Sign in with Google</span>
         </button>
-      </div>
+      </div> -->
 
       <p class="mt-8 text-xs font-light text-center text-gray-400">
         Don't have an account?
