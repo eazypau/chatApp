@@ -77,9 +77,25 @@ export const useStore = defineStore("store", {
         if (docSnap.exists()) {
           // console.log(docSnap.data());
           this.profile = docSnap.data();
+          this.attachListenerToProfileDoc()
         }
       } catch (error: any) {
         triggerMessage(error.message);
+      }
+    },
+    attachListenerToProfileDoc() {
+      try {
+        const docRef = doc(userProfileCollection, this.user);
+        const listen = onSnapshot(docRef, (doc: any) => {
+          console.log(doc.data());
+          this.profile = doc.data();
+          this.fetchChatList();
+        });
+        if (this.isUnsubscribe) {
+          listen();
+        }
+      } catch (error: any) {
+        console.log(error);
       }
     },
     async updateUserProfileInfo(newProfileInfo: { name: string; email: string }) {
@@ -151,9 +167,7 @@ export const useStore = defineStore("store", {
           for (let i = 0; i < this.profile.contacts.length; i++) {
             const userId = this.profile.contacts[i];
             if (userId === contacts.id) {
-              triggerMessage(
-                "This is a existing contacts. Please provide a valid email to add new contacts."
-              );
+              triggerMessage("This is a existing contacts. Please provide a valid email to add new contacts.");
               return;
             }
           }
@@ -193,7 +207,7 @@ export const useStore = defineStore("store", {
       }
     },
     //* reference: https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5
-    async fetchChatList() {
+    fetchChatList() {
       if (this.profile.chatGroupIds.length) {
         try {
           const unsub = onSnapshot(chatCollection, (snapShot: any) => {
@@ -222,11 +236,8 @@ export const useStore = defineStore("store", {
         }
       }
     },
-    async fetchCurrentChat(chatId: string) {
-      const findCurrentChatContent = query(
-        collection(chatCollection, chatId, "messages"),
-        orderBy("sentAt")
-      );
+    fetchCurrentChat(chatId: string) {
+      const findCurrentChatContent = query(collection(chatCollection, chatId, "messages"), orderBy("sentAt"));
       const unsubscribe = onSnapshot(findCurrentChatContent, (querySnapshot: any) => {
         this.currentChatContent = [];
         querySnapshot.forEach((doc: any) => {
@@ -242,23 +253,34 @@ export const useStore = defineStore("store", {
     async fetchChatDocument(members: string[]) {
       let chatContainer: any[] = [];
       let filtered: any[] = [];
-      let fetchAllChats = await getDocs(chatCollection)
+      let fetchAllChats = await getDocs(chatCollection);
       //* ref: https://bobbyhadz.com/blog/javascript-check-if-two-arrays-have-same-elements
       fetchAllChats.forEach((doc) => {
-        chatContainer.push(doc.data())
-      })
+        chatContainer.push(doc.data());
+      });
       for (let i = 0; i < chatContainer.length; i++) {
         const chatMembers = chatContainer[i].members;
-        let validate
+        // let validate = false
+        let counter = 0;
         if (chatMembers.length === members.length) {
-          validate = chatMembers.every((element:string) => {
-            if (chatMembers.includes(element)) {
-              return true
+          // validate = chatMembers.every((element:string) => {
+          //   if (chatMembers.includes(element)) {
+          //     return true
+          //   }
+          //   return false
+          // })
+          chatMembers.sort();
+          members.sort();
+          // console.log(chatMembers);
+          // console.log(members);
+          for (let i = 0; i < chatMembers.length; i++) {
+            if (chatMembers[i] === members[i]) {
+              counter++;
             }
-            return false
-          })
-          if (validate === true) {
-            filtered.push(chatContainer[i])
+          }
+          // console.log(counter);
+          if (counter === chatMembers.length) {
+            filtered.push(chatContainer[i]);
           }
         }
       }
@@ -299,12 +321,7 @@ export const useStore = defineStore("store", {
       });
       return createChatDoc.id;
     },
-    async sendMessage(message: {
-      senderName: string;
-      text: string;
-      senderId: string;
-      chatId: string;
-    }) {
+    async sendMessage(message: { senderName: string; text: string; senderId: string; chatId: string }) {
       let firstTime = false;
       let messageContent = message;
       if (message.chatId === "") {

@@ -81,13 +81,19 @@
     components: { Menu, MenuButton, MenuItems, MenuItem },
     setup() {
       const store = useStore();
-      const logOut = async () => {
+      const logOut = () => {
         // console.log("log out...");
-        // store.isUnsubscribe = true
+        store.isUnsubscribe = true
+        store.attachListenerToProfileDoc()
+        for (let i = 0; i < store.profile.chatGroupIds.length; i++) {
+          const chatGroupId = store.profile.chatGroupIds[i];
+          store.fetchCurrentChat(chatGroupId)
+        }
         // await store.fetchChatList()
-        // await store.fetchCurrentChat()
+        // store.fetchCurrentChat()
         logOutUser();
-        store.$reset();
+        // store.$reset();
+        setTimeout(() => store.$reset(), 1000)
       };
       return { logOut };
     },

@@ -180,7 +180,7 @@
   });
   await store.fetchUserProfile();
   await store.fetchContactList();
-  await store.fetchChatList();
+  store.fetchChatList();
 
   const chatList = computed(() => store.getChatList);
   const listOfChatContent = computed(() => {
@@ -225,6 +225,8 @@
     { deep: true }
   );
 
+  watch(() => store.profile.chatGroupIds, () => { store.fetchChatList() })
+
   let currentChatName = ref("");
   const currentChatId = computed(() => store.getCurrentChatId);
   let currentPhoto = ref("");
@@ -251,7 +253,7 @@
     currentChatName.value = contactDoc.name;
     showContact.value = false;
     const findDoc: any = await store.fetchChatDocument(chatDocInfo.members);
-    console.log(findDoc);
+    // console.log(findDoc);
     if (findDoc.length > 0) {
       await store.fetchCurrentChat(findDoc[0].id);
       store.currentChatId = findDoc[0].id;
