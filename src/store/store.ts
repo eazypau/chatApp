@@ -87,7 +87,7 @@ export const useStore = defineStore("store", {
       try {
         const docRef = doc(userProfileCollection, this.user);
         const listen = onSnapshot(docRef, (doc: any) => {
-          console.log(doc.data());
+          // console.log(doc.data());
           this.profile = doc.data();
           this.fetchChatList();
         });
