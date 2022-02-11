@@ -5,6 +5,7 @@
       type="password"
       :placeholder="name"
       :name="inputName"
+      required
       :value="value"
       @input="onInput"
     />

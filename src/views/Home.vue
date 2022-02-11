@@ -252,6 +252,8 @@
     currentPhoto.value = contactDoc.photo;
     currentChatName.value = contactDoc.name;
     showContact.value = false;
+    store.currentChatId = "";
+    store.currentChatContent = [];
     const findDoc: any = await store.fetchChatDocument(chatDocInfo.members);
     // console.log(findDoc);
     if (findDoc.length > 0) {
@@ -262,6 +264,8 @@
       container.scrollTop = container.scrollHeight;
     }, 500);
     selectedAChat.value = true;
+    // console.log(store.currentChatId);
+    
   };
   //* reference https://newbedev.com/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up
   const viewChat = async (chatDoc: any) => {
@@ -299,24 +303,6 @@
     const container: HTMLElement | any = document.getElementById("dummy");
     container.scrollIntoView({ behavior: "smooth" });
   };
-
-  //// create chat ballons, chat pills, modal and dropdown components
-  //// create the chat window at home page
-  //// use which version of firebase? v8 or v9?
-  //// implement firebase into the project
-  //// implement firebase auth (createUser, login, logout and send new password)
-  //// implement firebase store (delete profile, delete contact, delete chat history)
-  //// create view other user profile
-  //// implement firebase storage (delete profile image)
-  //// add loading icon at register button and reset pw button
-  //// sort out the contact list user names
-  //// implement google login and also create profile with google acc info
-  //// add meta tags for SEO purposes
-  //// touch up on the colors
-  //// resolve all ts errors and eslint erros...
-  // TODO: update README.md (now left the video/gif)
-  ////  need to comment out some of console log (after final test run) and change some to alert (maybe can consider using sweet alert/the NotificationModal)
-  //// error page
 </script>
 <style scoped>
   /* scoped is to prevent the styling to be used globally */

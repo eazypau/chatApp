@@ -171,13 +171,15 @@ export const useStore = defineStore("store", {
               return;
             }
           }
+          const addUserContact = await updateDoc(doc(userProfileCollection, this.user), {
+            contacts: arrayUnion(contacts.id),
+          });
+          // await this.fetchUserProfile();
+          this.contactList.push(contacts);
+          triggerMessage("Successfully added new contact.");
+        } else {
+          triggerMessage("User contact does not exist");
         }
-        const addUserContact = await updateDoc(doc(userProfileCollection, this.user), {
-          contacts: arrayUnion(contacts.id),
-        });
-        // await this.fetchUserProfile();
-        this.contactList.push(contacts);
-        triggerMessage("Successfully added new contact.");
       } catch (error: any) {
         triggerMessage(error.message);
       }
@@ -389,25 +391,5 @@ export const useStore = defineStore("store", {
         console.log(error.message);
       }
     },
-    // async deleteChatDoc(id: string) {
-    //   try {
-    //     // for (let i = 0; i < this.currentChatContent.length; i++) {
-    //     //   const msgId = this.currentChatContent[i].id;
-    //     //   await deleteDoc(doc(chatCollection, id, "messages", msgId));
-    //     // }
-    //     // await deleteDoc(doc(chatCollection, id));
-    //     console.log(id);
-    //     await updateDoc(doc(userProfileCollection, this.profile.id), {
-    //       chatGroupIds: arrayRemove(id),
-    //     });
-    //     this.currentChatContent = [];
-    //     this.chatList = this.chatList.filter((item: any) => {
-    //       return item.id !== id;
-    //     });
-    //     console.log(this.chatList);
-    //   } catch (error: any) {
-    //     console.log(error.message);
-    //   }
-    // },
   },
 });

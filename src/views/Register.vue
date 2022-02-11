@@ -1,14 +1,14 @@
 <template>
   <div class="w-screen h-screen flex items-center justify-center bg-gray-300 bg-opacity-75">
     <transition name="modal">
-      <Notification v-if="showMsg" :error-msg="popUpMsg" />
+      <Notification v-if="isShown" :error-msg="modalMsg" />
     </transition>
 
     <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md">
       <div class="px-6 py-4">
         <h2 class="text-3xl font-bold text-center text-gray-700">EazyChat</h2>
         <p class="mt-1 text-center text-gray-500">Register</p>
-        <form class="mt-3">
+        <form class="mt-3" action="#" method="POST" @submit.prevent="createUser">
           <div>
             <label for="name" class="block text-base text-gray-800 font-medium pl-1 mb-1"
               >Name</label
@@ -16,6 +16,7 @@
             <TextInput
               name="Name"
               input-name="name"
+              required
               :value="name"
               @update:model-value="name = $event"
             />
@@ -25,8 +26,10 @@
               >Email</label
             >
             <TextInput
+              type="email"
               name="Email"
               input-name="email"
+              required
               :value="email"
               @update:model-value="email = $event"
             />
@@ -55,7 +58,7 @@
             @keydown.enter="createUser"
           />
           <div class="flex items-center justify-center mt-8">
-            <button class="authBtn" type="button" @click="createUser">
+            <button class="authBtn" type="submit">
               <span v-if="!loading">Register</span
               ><span v-else class="animation-pulse">Loading...</span>
             </button>
@@ -75,31 +78,20 @@
   import PwInput from "../components/molecules/PwInput.vue";
   import { createUserAcc } from "../firebase/auth";
   import Notification from "../components/molecules/Notification.vue";
+  import useNotification from "../composable/useNotification";
 
   let name = ref("");
   let email = ref("");
   let password = ref("");
   let confirmPassword = ref("");
-  let popUpMsg = ref("");
-  let showMsg = ref(false);
+  // let popUpMsg = ref("");
+  // let showMsg = ref(false);
   let loading = ref(false);
+  const { isShown, modalMsg, triggerMessage } = useNotification();
   const createUser = async () => {
     // console.log('create');
-    if (
-      name.value === "" ||
-      email.value === "" ||
-      password.value === "" ||
-      confirmPassword.value === ""
-    ) {
-      popUpMsg.value = "Please provide the information required.";
-      showMsg.value = true;
-      setTimeout(() => (showMsg.value = false), 2000);
-      return;
-    }
     if (password.value !== confirmPassword.value) {
-      popUpMsg.value = "Password and confirm password must be same";
-      showMsg.value = true;
-      setTimeout(() => (showMsg.value = false), 2000);
+      triggerMessage("Password and confirm password must be same");
       password.value = "";
       confirmPassword.value = "";
       return;
@@ -112,6 +104,7 @@
       chatGroupIds: [],
     };
     createUserAcc(userDetails);
+    loading.value = false
   };
 </script>
 <style>

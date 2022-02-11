@@ -24,7 +24,9 @@ const signInExistingUser = (email: string, password: string) => {
       return router.push({ name: "Home" });
     })
     .catch((err) => {
-      triggerMessage(err.message);
+      // const errorCode = err.code;
+      const errorMessage = err.message;
+      return triggerMessage(errorMessage);
     });
 };
 
@@ -35,7 +37,8 @@ const logOutUser = () => {
       return router.push({ name: "Login" });
     })
     .catch((err) => {
-      triggerMessage(err.message);
+      const errorMessage = err.message;
+      triggerMessage(errorMessage);
     });
 };
 
@@ -59,7 +62,8 @@ const createUserAcc = (userDetails: { email: string; password: string; name: str
       router.push({ name: "Home" });
     })
     .catch((err) => {
-      triggerMessage(err.message);
+      const errorMessage = err.message;
+      triggerMessage(errorMessage);
     });
 };
 
@@ -69,7 +73,8 @@ const sendNewPassWord = (email: string) => {
       triggerMessage("Successfully send password");
     })
     .catch((err) => {
-      triggerMessage(err.message);
+      const errorMessage = err.message;
+      triggerMessage(errorMessage);
     });
 };
 
@@ -80,7 +85,8 @@ const updateUserAccEmail = (email: string) => {
       // triggerMessage("Successfully update email address");
     })
     .catch((err) => {
-      triggerMessage(err.message);
+      const errorMessage = err.message;
+      triggerMessage(errorMessage);
     });
 };
 
@@ -91,7 +97,8 @@ const deleteUserAcc = () => {
       triggerMessage("Successfully deleted your account.");
     })
     .catch((err: any) => {
-      triggerMessage(err.message);
+      const errorMessage = err.message;
+      triggerMessage(errorMessage);
     });
 };
 

@@ -2,9 +2,10 @@
   <div class="w-full">
     <input
       class="inputStyle"
-      type="text"
+      :type="type"
       :placeholder="name"
       :name="inputName"
+      :required="required"
       :value="value"
       @input="onInput"
     />
@@ -19,6 +20,10 @@
         type: String,
         required: true,
       },
+      type: {
+        type: String,
+        default: "text"
+      },
       inputName: {
         type: String,
         required: true,
@@ -28,6 +33,10 @@
         default: "",
         required: true,
       },
+      required: {
+        type: Boolean,
+        default: false
+      }
     },
     setup(props, { emit }) {
       const onInput = (event: any) => {
