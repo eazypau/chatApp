@@ -3,17 +3,13 @@
     <NavigationBar />
     <NotificationVue v-if="isShown" :error-msg="modalMsg" />
     <div class="flex viewHeight">
-      <transition name="addContactAnimate">
-        <ContactList
-          v-if="showContact"
-          :contacts="contactList"
-          @close-contact="showContact = false"
-          @create-chat="createChatWindow"
-        />
-      </transition>
-      <transition name="addContactAnimate">
-        <AddContact v-if="showAddContact" @close-contact="showAddContact = false" />
-      </transition>
+      <ContactList
+        :is-open="showContact"
+        :contacts="contactList"
+        @close-contact="showContact = false"
+        @create-chat="createChatWindow"
+      />
+      <AddContact :is-open="showAddContact" @close-contact="showAddContact = false" />
       <div class="z-10 w-full md:w-4/12 lg:w-3/12 flex flex-col">
         <!-- left panel -->
         <Profile
@@ -131,14 +127,6 @@
             @close-profile="showOtherProfile = false"
           />
         </div>
-        <!-- <Profile
-          v-if="showOtherProfile"
-          class="absolute inset-y-0 right-0 z-10 w-full lg:w-4/12"
-          :profile-img="otherUserProfilePic"
-          :user-email="otherUserProfile.email"
-          :user-name="otherUserProfile.name"
-          @close-profile="showOtherProfile = false"
-        /> -->
       </div>
     </div>
   </div>
@@ -173,9 +161,6 @@
     if (user) {
       // console.log(user);
       store.user = user.uid;
-      // await store.fetchUserProfile();
-      // await store.fetchContactList();
-      // await store.fetchChatList();
     }
   });
   await store.fetchUserProfile();
@@ -331,13 +316,5 @@
     .listOfChatHeight {
       height: 91vh;
     }
-  }
-  .addContactAnimate-enter-active,
-  .addContactAnimate-leave-active {
-    transition: opacity 0.4s ease;
-  }
-  .addContactAnimate-enter-from,
-  .addContactAnimate-leave-to {
-    opacity: 0;
   }
 </style>
