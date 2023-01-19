@@ -48,7 +48,9 @@ Make sure to create a .redirects file in the public folder with the follow conte
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://www.netlify.com/)
 
 ## Demo
-https://user-images.githubusercontent.com/83596481/155500569-e071ec91-9ccf-4a4f-af02-4626a7635307.mp4
+
+https://user-images.githubusercontent.com/83596481/213340923-7586b8dc-c11b-4528-bcd1-139aa951b6cc.mp4
+
 
 ## Resources & References
 - [Structure Firestore (Firebase) For Scalable Chat App](https://levelup.gitconnected.com/structure-firestore-firebase-for-scalable-chat-app-939c7a6cd0f5)
